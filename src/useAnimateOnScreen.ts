@@ -25,10 +25,12 @@ export const useAnimateOnScreen = ({
 
   const hideElement = (element: HTMLElement) => {
     Object.assign(element.style, hiddenStyle);
+    // element.classList.remove("animation-fade-in");
   };
 
   const showElement = (element: HTMLElement) => {
     Object.assign(element.style, shownStyle);
+    // element.classList.add("animation-fade-in");
   };
 
   useEffect(() => {

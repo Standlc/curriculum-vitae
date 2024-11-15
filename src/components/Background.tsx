@@ -5,10 +5,10 @@ export default function Background() {
 
   return (
     <div
-      className="h-screen w-full flex justify-center flex-col gap-10"
+      className="min-h-screen py-20 w-full flex justify-center flex-col gap-10"
       id="background"
     >
-      <h1 ref={element as any} className="font-sans font-bold text-3xl">
+      <h1 ref={element as any} className="font-bold text-3xl">
         A Bit Of Backgound
       </h1>
       <div className="font-mono opacity-text flex flex-col gap-5 text-base">

@@ -6,12 +6,16 @@ import ScrollBar from "@/components/ScrollBar";
 
 export default function Index() {
   return (
-    <div className="w-full px-10 phone:w-[640px] m-auto">
-      <ScrollBar />
-      <Home />
-      <Background />
-      <Projects />
-      <Contact />
+    <div className="w-full">
+      <div className="w-full px-10 phone:w-[640px] m-auto">
+        <ScrollBar />
+        <Home />
+        <Background />
+        <Projects />
+        <Contact />
+      </div>
+      <div className="bg-gradient-to-b from-[var(--background)] pointer-events-none to-transparent z-20 fixed top-0 left-0 w-full h-[100px]"></div>
+      <div className="bg-gradient-to-t from-[var(--background)] pointer-events-none to-transparent z-20 fixed bottom-0 left-0 w-full h-[100px]"></div>
     </div>
   );
 }

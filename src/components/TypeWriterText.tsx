@@ -86,10 +86,8 @@ export const TypeWriterText = ({ ogText }: { ogText: string }) => {
   return (
     <div className="relative">
       {!dimensions && (
-        <div ref={textRef}>
-          <span className={`[visibility:hdden] font-mono top-0 left-0`}>
-            {ogText}
-          </span>
+        <div ref={textRef} className="[visibility:hidden]">
+          <span className={`font-mono top-0 left-0`}>{ogText}</span>
           <span
             className="bg-[rgb(255,255,255)] text-[rgba(0,0,0,0)]"
             style={{
@@ -103,6 +101,7 @@ export const TypeWriterText = ({ ogText }: { ogText: string }) => {
 
       <div
         style={{
+          display: dimensions ? "block" : "none",
           width: !isDone ? dimensions?.width : "auto",
           height: !isDone ? dimensions?.height : "auto",
         }}

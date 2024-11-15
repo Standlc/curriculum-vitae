@@ -37,18 +37,22 @@ export default function Contact() {
       id="contact"
     >
       {isCopied && (
-        <div className="font-mono fixed bottom-[50px] animate-clipboard-animation rounded-2xl border border-[rgba(255,255,255,0.1)] px-5 py-3 bg-black bg-opacity-50 z-10 backdrop-blur-lg flex items-center gap-3">
-          <div className="rounded-full border border-[rgba(255,255,255,0.15)] tex-[rgba(0,255,0,0.5)] flex items-center justify-center h-5 w-5">
-            <Check style={{ fontSize: 13 }} />
-          </div>
+        <div className="font-mono fixed bottom-[50px] animate-clipboard-animation rounded-2xl border border-[rgba(255,255,255,0.1)] px-4 py-3 bg-black bg-opacity-50 z-10 backdrop-blur-lg flex items-center gap-3">
+          <Mail style={{ fontSize: 20 }} />
           <span className="text-base">You've got my email copied!</span>
         </div>
       )}
 
-      <div ref={element as any} className="flex flex-col gap-10 items-center">
-        <h1 className="font-sans font-bold text-3xl">Let's get in touch</h1>
+      <div ref={element as any} className="flex flex-col gap-7 items-center">
+        <h1 className="font-bold text-3xl">Let's get in touch</h1>
 
-        <div className="flex gap-5">
+        <span className="opacity-text font-mono text-center whitespace-pre-line">
+          {
+            "Explore my open-source projects on Github,\nview my LinkedIn profile, or email me."
+          }
+        </span>
+
+        <div className="flex gap-5 w-full items-center justify-center">
           <a
             href="https://github.com/Standlc"
             target="_blank"
@@ -59,7 +63,7 @@ export default function Contact() {
           </a>
 
           <a
-            href="https://github.com/Standlc"
+            href="https://linkedin.com/in/stanislas-de-la-comble-514221203"
             target="_blank"
             className="flex gap-2 items-center hover:underline"
           >

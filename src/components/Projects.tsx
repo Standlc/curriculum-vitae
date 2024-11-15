@@ -1,69 +1,95 @@
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import { GitHub } from "@mui/icons-material";
+import { GitHub, Language } from "@mui/icons-material";
 import { useAnimateOnScreen } from "@/useAnimateOnScreen";
 
 const PROJECTS: {
   title: string;
   description: string;
   skills: string;
-  link: {
+  links: {
     url: string;
     icon: any;
-  };
+  }[];
 }[] = [
   {
     title: "Front-end developer at Cyberjobs",
     description: "Developement of the chat, back office and other modules.",
     skills: "React, .NET, SignalR",
-    link: {
-      url: "https://cyberjobs.fr",
-      icon: <ArrowOutwardIcon />,
-    },
+    links: [
+      {
+        url: "https://cyberjobs.fr",
+        icon: <Language />,
+      },
+    ],
+  },
+  {
+    title: "Notion Clone",
+    description: "Note taking based on Notion.",
+    skills: "React",
+    links: [
+      {
+        url: "https://github.com/Standlc/Notion-clone",
+        icon: <GitHub />,
+      },
+      {
+        url: "https://notion-clone-standlc.vercel.app/",
+        icon: <Language />,
+      },
+    ],
   },
   {
     title: "Minishell",
     description: "Shell in C with builtins and pipes.",
     skills: "C",
-    link: {
-      url: "https://github.com/Standlc/miniRT",
-      icon: <GitHub />,
-    },
+    links: [
+      {
+        url: "https://github.com/Standlc/Minishell",
+        icon: <GitHub />,
+      },
+    ],
   },
   {
     title: "MiniRT",
     description: "Single threaded ray tracing engine in C.",
     skills: "C, Minilibx",
-    link: {
-      url: "https://github.com/Standlc/miniRT",
-      icon: <GitHub />,
-    },
+    links: [
+      {
+        url: "https://github.com/Standlc/miniRT",
+        icon: <GitHub />,
+      },
+    ],
   },
   {
-    title: "WebServ",
+    title: "Webserv",
     description: "HTTP web server in C++.",
     skills: "C++",
-    link: {
-      url: "https://github.com/Standlc/miniRT",
-      icon: <GitHub />,
-    },
+    links: [
+      {
+        url: "https://github.com/Standlc/Webserv",
+        icon: <GitHub />,
+      },
+    ],
   },
   {
     title: "View",
     description: "Full-stack development of a 'twitter-like' website.",
     skills: "React, Fastify, Docker, Postgresql",
-    link: {
-      url: "https://github.com/Standlc/miniRT",
-      icon: <GitHub />,
-    },
+    links: [
+      {
+        url: "https://github.com/Standlc/View-social",
+        icon: <GitHub />,
+      },
+    ],
   },
   {
     title: "Distro",
     description: "Full-stack development of an online pong game.",
     skills: "React, Nest, Docker, Postgresql",
-    link: {
-      url: "https://github.com/Standlc/miniRT",
-      icon: <GitHub />,
-    },
+    links: [
+      {
+        url: "https://github.com/Standlc/transcendence",
+        icon: <GitHub />,
+      },
+    ],
   },
 ];
 
@@ -78,7 +104,7 @@ export default function Projects() {
       className="min-h-screen py-20 w-full flex justify-center flex-col gap-10"
       id="projects"
     >
-      <h1 ref={element as any} className="font-sans font-bold text-3xl">
+      <h1 ref={element as any} className="font-bold text-3xl">
         Projects and Positions
       </h1>
 
@@ -95,7 +121,7 @@ const Project = ({
   title,
   description,
   skills,
-  link,
+  links,
 }: (typeof PROJECTS)[number]) => {
   const { element } = useAnimateOnScreen({
     entranceRatio: 0.8,
@@ -103,22 +129,27 @@ const Project = ({
   });
 
   return (
-    <div ref={element as any} className="flex items-center justify-between">
+    <div ref={element as any} className="flex items-center justify-between gap-10">
       <div className="flex flex-col gap-2">
-        <h1 className="font-bold text-xl">
+        <h1 className="font-mono font-bold text-lg">
           {title}
-          <span className="font-thin text-lg"> ({skills})</span>
+          <span className="font-normal text-lg"> ({skills})</span>
         </h1>
         <span className="font-mono opacity-text text-base">{description}</span>
       </div>
 
-      <a
-        href={link.url}
-        target="_blank"
-        className="flex gap-2 items-center hover:underline"
-      >
-        {link.icon}
-      </a>
+      <div className="flex gap-5 items-center">
+        {links.map((link, i) => (
+          <a
+            key={i}
+            href={link.url}
+            target="_blank"
+            className="flex gap-2 items-center hover:underline opacity-text hover:opacity-100 transition-opacity"
+          >
+            {link.icon}
+          </a>
+        ))}
+      </div>
     </div>
   );
 };

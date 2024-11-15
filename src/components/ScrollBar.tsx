@@ -3,40 +3,40 @@ import { useEffect, useState } from "react";
 export const useScrollProgress = (id: string) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isCurrent, setIsCurrent] = useState(false);
+  const [sectionHeight, setSectionHeight] = useState(0);
 
   useEffect(() => {
+    const sectionRef = document.getElementById(id);
+    if (!sectionRef) return;
+
+    setSectionHeight(
+      sectionRef.getBoundingClientRect().height /
+        document.body.getBoundingClientRect().height
+    );
+
+    let animationId: number;
+
     const handler = () => {
-      const section = document.getElementById(id);
-      if (!section) return;
+      animationId = requestAnimationFrame(() => {
+        const rect = sectionRef.getBoundingClientRect();
 
-      const rect = section.getBoundingClientRect();
+        const progress = (window.innerHeight - rect.top) / rect.height;
 
-      // const progress = 1 - (rect.top + rect.height) / rect.height;
-      const progress = (window.innerHeight - rect.top) / rect.height;
-
-      setIsCurrent(progress > 0 && progress <= 1);
-      setScrollProgress(progress > 1 ? 1 : progress < 0 ? 0 : progress);
+        setIsCurrent(progress > 0 && progress <= 1);
+        setScrollProgress(progress > 1 ? 1 : progress < 0 ? 0 : progress);
+      });
     };
 
     handler();
 
     document.addEventListener("scroll", handler);
     return () => {
+      cancelAnimationFrame(animationId);
       document.removeEventListener("scroll", handler);
     };
   }, [id]);
 
-  //   useEffect(() => {
-  //     const section = document.getElementById(id);
-  //     if (!section) return;
-
-  //     setSectionHeight(
-  //       section.getBoundingClientRect().height /
-  //         document.body.getBoundingClientRect().height
-  //     );
-  //   }, []);
-
-  return { scrollProgress, isCurrent };
+  return { scrollProgress, isCurrent, sectionHeight };
 };
 
 export default function ScrollBar() {
@@ -76,7 +76,7 @@ export default function ScrollBar() {
 }
 
 const SectionProgress = ({ id }: { id: string }) => {
-  const { scrollProgress, isCurrent } = useScrollProgress(id);
+  const { scrollProgress, isCurrent, sectionHeight } = useScrollProgress(id);
   const containerClassname = !isCurrent ? "opacity-50" : "opacity-100";
   const labelClassname = !isCurrent
     ? "group-hover:opacity-100"
@@ -94,7 +94,10 @@ const SectionProgress = ({ id }: { id: string }) => {
   return (
     <div
       onClick={handleClick}
-      className={`${containerClassname} group/parent hover:opacity-100 [transition:opacity_1s] h-full flex gap-5 items-center justify-end`}
+      style={{
+        height: sectionHeight * 100 + "%",
+      }}
+      className={`${containerClassname} group/parent hover:opacity-100 [transition:opacity_1s] flex gap-5 items-center justify-end`}
     >
       <div
         className={`opacity-0 ${labelClassname} group-hover/parent:opacity-100 group-hover:translate-x-0 translate-x-2 flex items-center font-mono mt-auto capitalize h-full text-xs font-bold [transition:opacity_1s,transform_1s_cubic-bezier(0.4,0,0,0.8)]`}
