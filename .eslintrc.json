@@ -1,8 +1,7 @@
 {
   "extends": ["next/core-web-vitals", "next/typescript"],
-  "plugins": ["react-hooks"]
-  // "rules": {
-  //   "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-  //   "react-hooks/exhaustive-deps": "warn" // Warns for missing dependencies
-  // }
+  "plugins": ["react-hooks"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off"
+  }
 }

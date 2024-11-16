@@ -104,7 +104,7 @@ export default function Projects() {
       className="min-h-screen py-20 w-full flex justify-center flex-col gap-10"
       id="projects"
     >
-      <h1 ref={element as any} className="font-bold text-3xl">
+      <h1 ref={element as unknown as undefined} className="font-bold text-3xl">
         Projects and Positions
       </h1>
 
@@ -129,7 +129,10 @@ const Project = ({
   });
 
   return (
-    <div ref={element as any} className="flex items-center justify-between gap-10">
+    <div
+      ref={element as unknown as undefined}
+      className="flex items-center justify-between gap-10"
+    >
       <div className="flex flex-col gap-2">
         <h1 className="font-mono font-bold text-lg">
           {title}

@@ -8,7 +8,7 @@ export default function Background() {
       className="min-h-screen py-20 w-full flex justify-center flex-col gap-10"
       id="background"
     >
-      <h1 ref={element as any} className="font-bold text-3xl">
+      <h1 ref={element as unknown as undefined} className="font-bold text-3xl">
         A Bit Of Backgound
       </h1>
       <div className="font-mono opacity-text flex flex-col gap-5 text-base">
@@ -39,5 +39,5 @@ const Paragraph = ({ text }: { text: string }) => {
     unique: true,
   });
 
-  return <p ref={element as any}>{text}</p>;
+  return <p ref={element as unknown as undefined}>{text}</p>;
 };

@@ -1,5 +1,5 @@
 import { useAnimateOnScreen } from "@/useAnimateOnScreen";
-import { Check, GitHub, LinkedIn, Mail } from "@mui/icons-material";
+import { GitHub, LinkedIn, Mail } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 
 export default function Contact() {
@@ -39,12 +39,12 @@ export default function Contact() {
       {isCopied && (
         <div className="font-mono fixed bottom-[50px] animate-clipboard-animation rounded-2xl border border-[rgba(255,255,255,0.1)] px-4 py-3 bg-black bg-opacity-50 z-30 backdrop-blur-lg flex items-center gap-3">
           <Mail style={{ fontSize: 20 }} />
-          <span className="text-base">You've got my email copied!</span>
+          <span className="text-base">You&apos;ve got my email copied!</span>
         </div>
       )}
 
-      <div ref={element as any} className="flex flex-col gap-7 items-center">
-        <h1 className="font-bold text-3xl">Let's get in touch</h1>
+      <div ref={element as unknown as undefined} className="flex flex-col gap-7 items-center">
+        <h1 className="font-bold text-3xl">Let&apos;s get in touch</h1>
 
         <span className="opacity-text font-mono text-center whitespace-pre-line">
           {

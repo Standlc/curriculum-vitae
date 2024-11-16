@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export const useAnimateOnScreen = ({
   entranceRatio,
@@ -9,32 +9,36 @@ export const useAnimateOnScreen = ({
   unique?: boolean;
   delay?: number;
 }) => {
-  const hiddenStyle = {
-    opacity: "0",
-    transform: "scale(0.97) translateY(10px)",
-    transformOrigin: "top",
-    filter: "blur(3px)",
-  };
-  const shownStyle = {
-    opacity: "1",
-    transform: "scale(1) translateY(0px)",
-    filter: "blur(0px)",
-  };
+  const hiddenStyle = useMemo(() => {
+    return {
+      opacity: "0",
+      transform: "scale(0.97) translateY(10px)",
+      transformOrigin: "top",
+      filter: "blur(3px)",
+    };
+  }, []);
+  const shownStyle = useMemo(() => {
+    return {
+      opacity: "1",
+      transform: "scale(1) translateY(0px)",
+      filter: "blur(0px)",
+    };
+  }, []);
 
   const element = useRef<HTMLElement>(null);
 
-  const hideElement = (element: HTMLElement) => {
-    Object.assign(element.style, hiddenStyle);
-    // element.classList.remove("animation-fade-in");
-  };
-
-  const showElement = (element: HTMLElement) => {
-    Object.assign(element.style, shownStyle);
-    // element.classList.add("animation-fade-in");
-  };
-
   useEffect(() => {
     if (!element.current) return;
+
+    const hideElement = (element: HTMLElement) => {
+      Object.assign(element.style, hiddenStyle);
+      // element.classList.remove("animation-fade-in");
+    };
+
+    const showElement = (element: HTMLElement) => {
+      Object.assign(element.style, shownStyle);
+      // element.classList.add("animation-fade-in");
+    };
 
     hideElement(element.current);
 
@@ -74,7 +78,7 @@ export const useAnimateOnScreen = ({
     return () => {
       observer.disconnect();
     };
-  }, [delay]);
+  }, [delay, entranceRatio, unique, hiddenStyle, shownStyle]);
 
   return { element, hiddenStyle };
 };
