@@ -131,7 +131,7 @@ const Project = ({
   return (
     <div
       ref={element as unknown as undefined}
-      className="flex items-center justify-between gap-10"
+      className="flex items-start justify-between gap-10"
     >
       <div className="flex flex-col gap-2">
         <h1 className="font-mono font-bold text-lg">

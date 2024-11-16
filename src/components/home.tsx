@@ -1,5 +1,5 @@
-import { GitHub, LinkedIn } from "@mui/icons-material";
 import { TypeWriterText } from "./TypeWriterText";
+import Contacts from "./Contacts";
 
 const Home = () => {
   return (
@@ -28,24 +28,8 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="self-end mt-10 flex gap-7">
-            <a
-              href="https://github.com/Standlc"
-              target="_blank"
-              className="flex gap-2 items-center hover:underline"
-            >
-              <span className="opacity-text font-mono text-sm">Github</span>
-              <GitHub />
-            </a>
-
-            <a
-              href="https://linkedin.com/in/stanislas-de-la-comble-514221203"
-              target="_blank"
-              className="flex gap-2 items-center hover:underline"
-            >
-              <span className="opacity-text font-mono text-sm">LinkedIn</span>
-              <LinkedIn />
-            </a>
+          <div className="self-end w-min">
+            <Contacts />
           </div>
         </div>
       </div>
