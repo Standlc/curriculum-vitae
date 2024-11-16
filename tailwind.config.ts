@@ -23,12 +23,13 @@ export default {
         base: "1rem",
       },
       screens: {
-        phone: "640px",
+        phone: "800px",
       },
       animation: {
         "clipboard-animation":
           "clipboard-animation 5s cubic-bezier(0.5,0,0,1) forwards",
         "fade-in": "fade-in 1s cubic-bezier(0.5,0,0,1) both",
+        "menu-fade-in": "menu-fade-in 0.5s cubic-bezier(0.5,0,0,1)",
       },
       keyframes: {
         "clipboard-animation": {
@@ -48,6 +49,16 @@ export default {
             opacity: "1",
             transform: "scale(1) translateY(0px)",
             filter: "blur(0px)",
+          },
+        },
+        "menu-fade-in": {
+          "0%": {
+            opacity: "0",
+            backdropFilter: "blur(0px)",
+          },
+          "100%": {
+            opacity: "1",
+            backdropFilter: "blur(50px)",
           },
         },
       },

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Burger from "./Burger";
 
 export const useScrollProgress = (id: string) => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -40,10 +41,36 @@ export const useScrollProgress = (id: string) => {
 };
 
 export default function ScrollBar() {
+  const [show, setShow] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [showScrollBar, setShowScrollBar] = useState(false);
+  const menuCloseTimeoutId = useRef<NodeJS.Timeout>();
+  const menuRef = useRef<HTMLDivElement>(null);
   const containerClassName = showScrollBar ? "opacity-100" : "opacity-0";
 
   useEffect(() => {
+    const handler = () => {
+      if (document.body.offsetWidth <= 800) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+        setShow(false);
+        setIsClosing(false);
+      }
+    };
+
+    const observer = new ResizeObserver(handler);
+    observer.observe(document.body);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      return;
+    }
+
     let timeoutId: NodeJS.Timeout;
 
     const scrollHandler = () => {
@@ -58,29 +85,72 @@ export default function ScrollBar() {
     return () => {
       clearInterval(timeoutId);
       document.removeEventListener("scroll", scrollHandler);
+      clearTimeout(menuCloseTimeoutId.current);
     };
-  }, []);
+  }, [isMobile]);
+
+  const handleClick = () => {
+    if (menuCloseTimeoutId.current !== undefined) {
+      return;
+    }
+
+    if (show) {
+      if (menuRef.current) {
+        menuRef.current.style.opacity = "0";
+      }
+
+      setShow(false);
+      setIsClosing(true);
+
+      menuCloseTimeoutId.current = setTimeout(() => {
+        setIsClosing(false);
+        menuCloseTimeoutId.current = undefined;
+      }, 500);
+
+      document.body.style.removeProperty("overflow");
+    } else {
+      setShow(true);
+      document.body.style.overflow = "hidden";
+    }
+  };
 
   return (
-    <div className={` fixed right-10 top-0 h-full py-[30vh]`}>
-      <div
-        className={`${containerClassName} h-full w-full flex flex-col gap-1 group hover:opacity-100 [transition:opacity_1s] cursor-pointer`}
-      >
-        <SectionProgress id="home" />
-        <SectionProgress id="background" />
-        <SectionProgress id="projects" />
-        <SectionProgress id="contact" />
-      </div>
-    </div>
+    <>
+      {isMobile && (
+        <div className="fixed top-[30px] right-[30px] z-50">
+          <Burger onClick={handleClick} isOpen={show} />
+        </div>
+      )}
+
+      {(!isMobile || show || isClosing) && (
+        <div
+          onClick={isMobile ? handleClick : undefined}
+          ref={menuRef}
+          className={
+            isMobile
+              ? "w-full left-0 fixed top-0 backdrop-blur-[50px] h-full z-40 bg-[rgba(0,0,0,0.7)] py-[30vh] flex items-center justify-center animate-menu-fade-in [transition:opacity_0.5s_cubic-bezier(0.5,0,0,1)]"
+              : `fixed top-0 h-full z-10 py-[30vh] pointer-events-none px-10 w-full flex justify-end`
+          }
+        >
+          <div
+            className={`${
+              !isMobile ? containerClassName : "animate-fade-in"
+            } w-min h-full flex flex-col items-end gap-1 group hover:opacity-100 [transition:opacity_1s] cursor-pointer pointer-events-auto`}
+          >
+            <SectionProgress id="home" />
+            <SectionProgress id="background" />
+            <SectionProgress id="projects" />
+            <SectionProgress id="contact" />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 const SectionProgress = ({ id }: { id: string }) => {
   const { scrollProgress, isCurrent, sectionHeight } = useScrollProgress(id);
   const containerClassname = !isCurrent ? "opacity-50" : "opacity-100";
-  const labelClassname = !isCurrent
-    ? "group-hover:opacity-100"
-    : "group-hover:opacity-100";
 
   const handleClick = () => {
     const section = document.getElementById(id);
@@ -100,12 +170,12 @@ const SectionProgress = ({ id }: { id: string }) => {
       className={`${containerClassname} group/parent hover:opacity-100 [transition:opacity_1s] flex gap-5 items-center justify-end`}
     >
       <div
-        className={`opacity-0 ${labelClassname} group-hover/parent:opacity-100 group-hover:translate-x-0 translate-x-2 flex items-center font-mono mt-auto capitalize h-full text-xs font-bold [transition:opacity_1s,transform_1s_cubic-bezier(0.4,0,0,0.8)]`}
+        className={`phone:opacity-0 group-hover:opacity-100 group-hover/parent:opacity-100 phone:group-hover:translate-x-0 translate-x-[6px] flex items-center font-mono mt-auto capitalize h-full text-xs font-semibold [transition:opacity_1s,transform_1s]`}
       >
         {id}
       </div>
       <div
-        className={`bg-white w-[2px] h-full bg-opacity-10 group-hover:w-[4px] [transition:width_1s,box-shadow_1s] group-hover/parent:shadow-[0_0_50px_rgba(255,255,255,0.3)]`}
+        className={`bg-white w-[4px] h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_1s,box-shadow_1s] group-hover/parent:shadow-[0_0_50px_rgba(255,255,255,0.4)]`}
       >
         <div
           className="bg-white opacity-50"

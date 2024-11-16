@@ -7,7 +7,7 @@ import ScrollBar from "@/components/ScrollBar";
 export default function Index() {
   return (
     <div className="w-full">
-      <div className="w-full px-10 phone:w-[640px] m-auto">
+      <div className="w-full px-10 max-w-[600px] m-auto flex flex-col items-center">
         <ScrollBar />
         <Home />
         <Background />

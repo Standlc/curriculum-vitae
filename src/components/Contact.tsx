@@ -37,7 +37,7 @@ export default function Contact() {
       id="contact"
     >
       {isCopied && (
-        <div className="font-mono fixed bottom-[50px] animate-clipboard-animation rounded-2xl border border-[rgba(255,255,255,0.1)] px-4 py-3 bg-black bg-opacity-50 z-10 backdrop-blur-lg flex items-center gap-3">
+        <div className="font-mono fixed bottom-[50px] animate-clipboard-animation rounded-2xl border border-[rgba(255,255,255,0.1)] px-4 py-3 bg-black bg-opacity-50 z-30 backdrop-blur-lg flex items-center gap-3">
           <Mail style={{ fontSize: 20 }} />
           <span className="text-base">You've got my email copied!</span>
         </div>
