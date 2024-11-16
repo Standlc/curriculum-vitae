@@ -128,7 +128,7 @@ export default function ScrollBar() {
           ref={menuRef}
           className={
             isMobile
-              ? "w-full left-0 fixed top-0 backdrop-blur-[50px] h-full z-40 bg-[rgba(0,0,0,0.7)] py-[30vh] flex items-center justify-center animate-menu-fade-in [transition:opacity_0.5s_cubic-bezier(0.5,0,0,1)]"
+              ? "w-full left-0 fixed top-0 backdrop-blur-[50px] h-full z-40 bg-[rgba(0,0,0,0.4)] py-[20vh] flex items-center justify-center animate-menu-fade-in [transition:opacity_0.5s_cubic-bezier(0.5,0,0,1)]"
               : `fixed top-0 h-full z-10 py-[30vh] pointer-events-none px-10 w-full flex justify-end`
           }
         >
@@ -170,12 +170,12 @@ const SectionProgress = ({ id }: { id: string }) => {
       className={`${containerClassname} group/parent hover:opacity-100 [transition:opacity_1s] flex gap-5 items-center justify-end`}
     >
       <div
-        className={`phone:opacity-0 group-hover:opacity-100 group-hover/parent:opacity-100 phone:group-hover:translate-x-0 translate-x-[6px] flex items-center font-mono mt-auto capitalize h-full text-xs font-semibold [transition:opacity_1s,transform_1s]`}
+        className={`phone:opacity-0 group-hover:opacity-100 group-hover/parent:opacity-100 phone:group-hover:translate-x-0 translate-x-[6px] flex items-center font-mono mt-auto capitalize h-full phone:text-xs font-semibold [transition:opacity_1s,transform_1s]`}
       >
         {id}
       </div>
       <div
-        className={`bg-white w-[4px] h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_1s,box-shadow_1s] group-hover/parent:shadow-[0_0_50px_rgba(255,255,255,0.4)]`}
+        className={`bg-white w-[5px] h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_1s,box-shadow_1s] group-hover/parent:shadow-[0_0_50px_rgba(255,255,255,0.4)]`}
       >
         <div
           className="bg-white opacity-50"

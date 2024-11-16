@@ -9,7 +9,7 @@ const Home = () => {
           className={`w-full flex flex-col gap-5 animate-fade-in [animation-delay:0.6s]`}
         >
           <div className="flex gap-8 flex-col items-start sm:flex-row sm:items-center">
-            <div className="sm:min-w-[100px] sm:w-[100px] sm:h-[100px] w-[30%] aspect-square rounded-full overflow-hidden">
+            <div className="sm:min-w-[100px] sm:w-[100px] sm:h-[100px] w-[40%] aspect-square rounded-full overflow-hidden">
               <img
                 className="h-full w-full"
                 src={"https://avatars.githubusercontent.com/u/92372490?v=4"}
