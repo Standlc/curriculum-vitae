@@ -12,7 +12,7 @@ const Home = () => {
             <div className="sm:min-w-[100px] sm:w-[100px] sm:h-[100px] w-[40%] aspect-square rounded-full overflow-hidden">
               <img
                 className="h-full w-full"
-                src={"https://avatars.githubusercontent.com/u/92372490?v=4"}
+                src={"/profile.jpeg"}
               />
             </div>
 

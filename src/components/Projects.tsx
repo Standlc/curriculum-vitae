@@ -23,7 +23,7 @@ const PROJECTS: {
   },
   {
     title: "Notion Clone",
-    description: "Note taking based on Notion.",
+    description: "Note taking app with basic Notion functions.",
     skills: "React",
     links: [
       {
@@ -71,7 +71,8 @@ const PROJECTS: {
   },
   {
     title: "View",
-    description: "Full-stack development of a 'twitter-like' website.",
+    description:
+      "Full-stack development of a 'twitter-like' website featuring posts and comments as threads.",
     skills: "React, Fastify, Docker, Postgresql",
     links: [
       {
@@ -82,7 +83,8 @@ const PROJECTS: {
   },
   {
     title: "Distro",
-    description: "Full-stack development of an online pong game.",
+    description:
+      "Full-stack development of an online pong game with a real-time chat.",
     skills: "React, Nest, Docker, Postgresql",
     links: [
       {

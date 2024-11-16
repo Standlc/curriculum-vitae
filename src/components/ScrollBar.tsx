@@ -45,9 +45,9 @@ export default function ScrollBar() {
   const [isClosing, setIsClosing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showScrollBar, setShowScrollBar] = useState(false);
-  const menuCloseTimeoutId = useRef<NodeJS.Timeout>();
-  const menuRef = useRef<HTMLDivElement>(null);
-  const containerClassName = showScrollBar ? "opacity-100" : "opacity-0";
+  const animationFrameId = useRef<number>();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = () => {
@@ -63,13 +63,15 @@ export default function ScrollBar() {
     const observer = new ResizeObserver(handler);
     observer.observe(document.body);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (animationFrameId.current)
+        cancelAnimationFrame(animationFrameId.current);
+    };
   }, []);
 
   useEffect(() => {
-    if (isMobile) {
-      return;
-    }
+    if (isMobile) return;
 
     let timeoutId: NodeJS.Timeout;
 
@@ -85,32 +87,33 @@ export default function ScrollBar() {
     return () => {
       clearInterval(timeoutId);
       document.removeEventListener("scroll", scrollHandler);
-      clearTimeout(menuCloseTimeoutId.current);
     };
   }, [isMobile]);
 
   const handleClick = () => {
-    if (menuCloseTimeoutId.current !== undefined) {
-      return;
-    }
+    if (isClosing) return;
 
     if (show) {
-      if (menuRef.current) {
-        menuRef.current.style.opacity = "0";
-      }
-
-      setShow(false);
       setIsClosing(true);
 
-      menuCloseTimeoutId.current = setTimeout(() => {
-        setIsClosing(false);
-        menuCloseTimeoutId.current = undefined;
-      }, 500);
+      if (divRef.current && containerRef.current) {
+        divRef.current.style.animation = "undefined";
+        containerRef.current.style.animation = "undefined";
 
-      document.body.style.removeProperty("overflow");
+        animationFrameId.current = requestAnimationFrame(() => {
+          if (!divRef.current || !containerRef.current) return;
+
+          divRef.current.style.animation =
+            "fade-in-right 0.5s cubic-bezier(0.5,0,0,1) reverse both";
+          containerRef.current.style.animation =
+            "menu-fade-in 0.5s cubic-bezier(0.5,0,0,1) reverse both";
+        });
+      }
     } else {
+      document.body.style.setProperty("overflow", "hidden");
+      document.body.style.setProperty("touch-action", "none");
+      setIsClosing(false);
       setShow(true);
-      document.body.style.overflow = "hidden";
     }
   };
 
@@ -118,24 +121,35 @@ export default function ScrollBar() {
     <>
       {isMobile && (
         <div className="fixed top-[30px] right-[30px] z-50">
-          <Burger onClick={handleClick} isOpen={show} />
+          <Burger onClick={handleClick} isOpen={show && !isClosing} />
         </div>
       )}
 
-      {(!isMobile || show || isClosing) && (
+      {(!isMobile || show) && (
         <div
+          ref={containerRef}
           onClick={isMobile ? handleClick : undefined}
-          ref={menuRef}
           className={
             isMobile
-              ? "w-full left-0 fixed top-0 backdrop-blur-[50px] h-full z-40 bg-[rgba(0,0,0,0.4)] py-[20vh] flex items-center justify-center animate-menu-fade-in [transition:opacity_0.5s_cubic-bezier(0.5,0,0,1)]"
-              : `fixed top-0 h-full z-10 py-[30vh] pointer-events-none px-10 w-full flex justify-end`
+              ? "[background:linear-gradient(to_left,var(--background),transparent)] animate-menu-fade-in w-full left-0 fixed top-0 h-full z-40 py-[20vh] flex items-center justify-end px-10"
+              : `${
+                  showScrollBar ? "opacity-100" : "opacity-0"
+                } hover:opacity-100 fixed top-0 h-full z-10 py-[30vh] pointer-events-none px-10 w-full flex justify-end [transition:opacity_1s_cubic-bezier(0.5,0,0,1)]`
           }
         >
           <div
+            ref={divRef}
             className={`${
-              !isMobile ? containerClassName : "animate-fade-in"
-            } w-min h-full flex flex-col items-end gap-1 group hover:opacity-100 [transition:opacity_1s] cursor-pointer pointer-events-auto`}
+              isMobile ? `animate-fade-in-right` : ""
+            } w-min h-full flex flex-col items-end gap-1 group hover:opacity-100 [transition:opacity_1s,transform_1s_cubic-bezier(0.5,0,0,1)] cursor-pointer pointer-events-auto`}
+            onAnimationEnd={() => {
+              if (isClosing) {
+                setShow(false);
+                setIsClosing(false);
+                document.body.style.removeProperty("overflow");
+                document.body.style.removeProperty("touch-action");
+              }
+            }}
           >
             <SectionProgress id="home" />
             <SectionProgress id="background" />
@@ -167,15 +181,15 @@ const SectionProgress = ({ id }: { id: string }) => {
       style={{
         height: sectionHeight * 100 + "%",
       }}
-      className={`${containerClassname} group/parent hover:opacity-100 [transition:opacity_1s] flex gap-5 items-center justify-end`}
+      className={`${containerClassname} group/parent hover:opacity-100 [transition:opacity_0.6s] flex gap-5 items-center justify-end`}
     >
       <div
-        className={`phone:opacity-0 group-hover:opacity-100 group-hover/parent:opacity-100 phone:group-hover:translate-x-0 translate-x-[6px] flex items-center font-mono mt-auto capitalize h-full phone:text-xs font-semibold [transition:opacity_1s,transform_1s]`}
+        className={`phone:opacity-0 phone:group-hover:opacity-100 group-hover/parent:opacity-100 phone:group-hover:translate-x-0 translate-x-[6px] flex items-center font-mono mt-auto capitalize h-full text-xs font-semibold [transition:opacity_0.6s,transform_0.6s]`}
       >
         {id}
       </div>
       <div
-        className={`bg-white w-[5px] h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_1s]`}
+        className={`bg-white w-[5px] rounded-sm overflow-hidden h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_0.6s]`}
       >
         <div
           className="bg-white opacity-50"

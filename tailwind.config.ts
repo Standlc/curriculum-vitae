@@ -29,7 +29,8 @@ export default {
         "clipboard-animation":
           "clipboard-animation 5s cubic-bezier(0.5,0,0,1) forwards",
         "fade-in": "fade-in 1s cubic-bezier(0.5,0,0,1) both",
-        "menu-fade-in": "menu-fade-in 0.5s cubic-bezier(0.5,0,0,1)",
+        "fade-in-right": "fade-in-right 1s cubic-bezier(0.5,0,0,1) both",
+        "menu-fade-in": "menu-fade-in 0.5s cubic-bezier(0.5,0,0,1) both",
       },
       keyframes: {
         "clipboard-animation": {
@@ -51,6 +52,19 @@ export default {
             filter: "blur(0px)",
           },
         },
+        "fade-in-right": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.9) translateX(50px)",
+            transformOrigin: "right",
+            filter: "blur(3px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1) translateX(0px)",
+            filter: "blur(0px)",
+          },
+        },
         "menu-fade-in": {
           "0%": {
             opacity: "0",
@@ -58,7 +72,7 @@ export default {
           },
           "100%": {
             opacity: "1",
-            backdropFilter: "blur(50px)",
+            backdropFilter: "blur(5px)",
           },
         },
       },
