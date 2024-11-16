@@ -134,9 +134,9 @@ const Project = ({
       className="flex items-start justify-between gap-10"
     >
       <div className="flex flex-col gap-2">
-        <h1 className="font-mono font-bold text-lg">
+        <h1 className="font-mono font-semibold">
           {title}
-          <span className="font-normal text-lg"> ({skills})</span>
+          <span className="font-normal text"> ({skills})</span>
         </h1>
         <span className="font-mono opacity-text text-base">{description}</span>
       </div>

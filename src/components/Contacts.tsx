@@ -13,7 +13,7 @@ export default function Contacts() {
 
   const handleCopyEmail = async () => {
     try {
-      await navigator.clipboard.writeText("s.delacomble@gmail.com");
+      await navigator.clipboard?.writeText("s.delacomble@gmail.com");
       setIsCopied(true);
 
       if (timeoutId.current === undefined) {
@@ -47,12 +47,17 @@ export default function Contacts() {
         <LinkedIn />
       </a>
 
-      <div
-        className="flex gap-2 items-center hover:underline cursor-pointer"
-        onClick={handleCopyEmail}
-      >
-        <span className="opacity-text font-mono text-sm">Email</span>
-        <Mail />
+      <div className="flex items-center relative justify-center">
+        <div
+          onClick={handleCopyEmail}
+          className="flex gap-2 items-center hover:underline cursor-pointer justify-center peer/email"
+        >
+          <span className="opacity-text font-mono text-sm">Email</span>
+          <Mail />
+        </div>
+        <div className="[transition:opacity_0.3s_cubic-bezier(0.5,0,0,2),transform_0.3s_cubic-bezier(0.5,0,0,2)] peer-hover/email:opacity-100 peer-hover/email:-translate-y-[100%] opacity-0 absolute -top-[5px] font-semibold bg-[var(--background)] -translate-y-[90%] font-mono text-xs px-2 py-1 rounded-lg border border-[rgba(255,255,255,0.1)] z-20 min-w-max">
+          Click to copy
+        </div>
       </div>
     </div>
   );

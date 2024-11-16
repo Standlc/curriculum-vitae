@@ -34,8 +34,8 @@ export default {
       keyframes: {
         "clipboard-animation": {
           "0%": { transform: "translateY(150px)" },
-          "15%": { transform: "translateY(0px)" },
-          "85%": { transform: "translateY(0px)" },
+          "10%": { transform: "translateY(0px)" },
+          "90%": { transform: "translateY(0px)" },
           "100%": { transform: "translateY(150px)" },
         },
         "fade-in": {

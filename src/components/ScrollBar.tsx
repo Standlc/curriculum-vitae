@@ -175,7 +175,7 @@ const SectionProgress = ({ id }: { id: string }) => {
         {id}
       </div>
       <div
-        className={`bg-white w-[5px] h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_1s,box-shadow_1s] group-hover/parent:shadow-[0_0_50px_rgba(255,255,255,0.4)]`}
+        className={`bg-white w-[5px] h-full bg-opacity-10 phone:group-hover:scale-x-100 phone:scale-x-50 origin-right [transition:transform_1s]`}
       >
         <div
           className="bg-white opacity-50"
