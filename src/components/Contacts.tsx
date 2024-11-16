@@ -1,7 +1,7 @@
 import { EmailClipboardNotificationContext } from "@/EmailClipboardNotificationContext";
 import { GitHub, LinkedIn, Mail } from "@mui/icons-material";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 
 export default function Contacts() {
   const { update: setIsCopied } = useContext(EmailClipboardNotificationContext);
