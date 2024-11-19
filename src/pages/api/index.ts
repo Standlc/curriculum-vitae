@@ -1,4 +1,4 @@
-// import prisma from "@/backend/db";
+import prisma from "@/backend/db";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -31,22 +31,22 @@ export default async function handler(
 
       // console.log(data);
 
-      return res.status(200).json(data);
+      // return res.status(200).json(data);
 
-      // const newVisit = await prisma.visit.create({
-      //   data: {
-      //     ip,
-      //     country: data.country,
-      //     countryCode: data.countryCode,
-      //     region: data.region,
-      //     regionName: data.regionName,
-      //     city: data.city,
-      //     lat: data.lat,
-      //     lon: data.lon,
-      //   },
-      // });
+      const newVisit = await prisma.visit.create({
+        data: {
+          ip,
+          country: data.country,
+          countryCode: data.countryCode,
+          region: data.region,
+          regionName: data.regionName,
+          city: data.city,
+          lat: data.lat,
+          lon: data.lon,
+        },
+      });
 
-      // res.status(200).json(newVisit);
+      res.status(200).json(newVisit);
     } else if (req.method === "POST") {
       res.status(200);
     }
