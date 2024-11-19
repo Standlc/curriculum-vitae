@@ -43,7 +43,7 @@ export default async function handler(
 
       res.status(200).json(newVisit);
     } catch (error) {
-      res.status(500).json({ message: "Failed to create visit" });
+      res.status(500).json({ message: error });
     }
   } else if (req.method === "POST") {
     res.status(200);
