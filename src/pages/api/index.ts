@@ -19,19 +19,19 @@ export default async function handler(
         return res.status(400).json({ message: "No IP address provided" });
       }
 
-      const response = await fetch(`http://ip-api.com/json/${"6.76.21.21"}`);
+      // console.log(ip);
+
+      const response = await fetch(`http://ip-api.com/json/${ip}`);
       if (!response.ok) {
         return res.status(500).json({ message: "Failed to fetch IP data" });
       }
 
       const data = await response.json();
       if (data.status !== "success") {
-        return res.status(404).json({ message: "Could not locate IP address" });
+        return res
+          .status(404)
+          .json({ message: `Could not locate IP address: ${ip}` });
       }
-
-      // console.log(data);
-
-      // return res.status(200).json(data);
 
       const newVisit = await prisma.visit.create({
         data: {
