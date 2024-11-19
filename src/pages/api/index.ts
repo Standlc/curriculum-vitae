@@ -1,10 +1,12 @@
-import prisma from "@/backend/db";
+// import prisma from "@/backend/db";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-  req: NextApiRequest,
+  _: NextApiRequest,
   res: NextApiResponse
 ) {
+  return res.status(200).send("hello from api!");
+  /* 
   if (req.method === "GET") {
     const forwarded = req.headers["x-forwarded-for"];
     const ip = forwarded
@@ -25,7 +27,7 @@ export default async function handler(
       return res.status(404).json({ message: "Could not locate IP address" });
     }
 
-    console.log(data);
+    // console.log(data);
 
     try {
       const newVisit = await prisma.visit.create({
@@ -48,4 +50,5 @@ export default async function handler(
   } else if (req.method === "POST") {
     res.status(200);
   }
+  */
 }
