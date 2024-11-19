@@ -12,6 +12,7 @@ const PROJECTS: {
 }[] = [
   {
     title: "Front-end developer at Cyberjobs",
+    // todo: add more details about the company
     description: "Developement of the chat, back office and other modules.",
     skills: "React, .NET, SignalR",
     links: [
@@ -60,7 +61,8 @@ const PROJECTS: {
   },
   {
     title: "Webserv",
-    description: "HTTP web server in C++.",
+    description:
+      "HTTP web server in C++ with static file serving and uploading and HTTP/CGI proxies.",
     skills: "C++",
     links: [
       {
@@ -73,7 +75,7 @@ const PROJECTS: {
     title: "View",
     description:
       "Full-stack development of a 'twitter-like' website featuring posts and comments as threads.",
-    skills: "React, Fastify, Docker, Postgresql",
+    skills: "React, Fastify, Docker, PostgreSQL",
     links: [
       {
         url: "https://github.com/Standlc/View-social",
@@ -84,8 +86,8 @@ const PROJECTS: {
   {
     title: "Distro",
     description:
-      "Full-stack development of an online pong game with a real-time chat.",
-    skills: "React, Nest, Docker, Postgresql",
+      "Full-stack development of an online pong game with a chat leveraging WebSockets for real-time features.",
+    skills: "React, Nest, Docker, PostgreSQL",
     links: [
       {
         url: "https://github.com/Standlc/transcendence",
