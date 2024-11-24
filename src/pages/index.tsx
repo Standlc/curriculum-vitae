@@ -17,7 +17,7 @@ export default function Index() {
   useQuery({
     queryKey: ["visitId"],
     queryFn: async () => {
-      const res = await axios.post("/api/analytics", {
+      const res = await axios.post("/api/visit", {
         time: new Date().toISOString(),
         referrer: document.referrer,
       });
@@ -28,7 +28,7 @@ export default function Index() {
   const updateVisit = useMutation({
     mutationKey: ["updateVisit"],
     mutationFn: async (visitId: number) => {
-      const res = await axios.put("/api/analytics", {
+      const res = await axios.put("/api/visit", {
         time: new Date().toISOString(),
         visitId: visitId,
       });
