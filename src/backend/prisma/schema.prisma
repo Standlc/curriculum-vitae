@@ -16,12 +16,22 @@ datasource db {
 model Visit {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
+  endAt       DateTime @default(now())
   ip          String
-  country     String
-  countryCode String
-  region      String
-  regionName  String
-  city        String
-  lat         Int
-  lon         Int
+  referrer    String?   @default("")
+  country     String?
+  countryCode String?
+  region      String?
+  regionName  String?
+  city        String?
+  lat         Float?
+  lon         Float?
+}
+
+model DiscardedIpAddress {
+  ip          String   @id
+}
+
+model Admin {
+  ip          String   @id
 }

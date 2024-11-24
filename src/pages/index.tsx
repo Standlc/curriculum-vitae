@@ -5,8 +5,60 @@ import Background from "@/components/Background";
 import ScrollBar from "@/components/ScrollBar";
 import { EmailClipboardNotificationProvider } from "@/EmailClipboardNotificationContext";
 import ClipboardEmailNotification from "@/components/ClipboardEmailNotification";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { useEffect } from "react";
+
+const VISIT_UPDATE_INTERVAL = 2000;
 
 export default function Index() {
+  const queryClient = useQueryClient();
+
+  useQuery({
+    queryKey: ["visitId"],
+    queryFn: async () => {
+      const res = await axios.post("/api/analytics", {
+        time: new Date().toISOString(),
+        referrer: document.referrer,
+      });
+      return res.data.visitId;
+    },
+  });
+
+  const updateVisit = useMutation({
+    mutationKey: ["updateVisit"],
+    mutationFn: async (visitId: number) => {
+      const res = await axios.put("/api/analytics", {
+        time: new Date().toISOString(),
+        visitId: visitId,
+      });
+      return res.data;
+    },
+  });
+
+  useEffect(() => {
+    let start = false;
+
+    const timeoutId = setTimeout(() => {
+      start = true;
+    }, VISIT_UPDATE_INTERVAL);
+
+    const intervalId = setInterval(() => {
+      if (!start) return;
+
+      const visitId = queryClient.getQueryData<number>(["visitId"]);
+      if (visitId !== undefined) {
+        // console.log(visitId);
+        updateVisit.mutate(visitId);
+      }
+    }, VISIT_UPDATE_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
+  }, [updateVisit, queryClient]);
+
   return (
     <EmailClipboardNotificationProvider>
       <div className="w-full">
