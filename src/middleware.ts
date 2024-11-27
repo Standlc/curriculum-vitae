@@ -2,7 +2,7 @@ import * as jose from "jose";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { VisiterType } from "./backend/apiTypes";
-import { isBotCrawling } from "./hooks/useIsBotCrawling";
+import { isBotCrawling } from "./isBotCrawling";
 
 export const isAuthenticated = async (req: NextRequest) => {
   const cookies = req.cookies;
