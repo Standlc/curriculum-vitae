@@ -22,14 +22,6 @@ export interface _PrismaMigrations {
   started_at: Generated<Timestamp>;
 }
 
-export interface Admin {
-  ip: string;
-}
-
-export interface DiscardedIpAddress {
-  ip: string;
-}
-
 export interface Visit {
   city: string | null;
   country: string | null;
@@ -43,11 +35,17 @@ export interface Visit {
   referrer: Generated<string | null>;
   region: string | null;
   regionName: string | null;
+  userAgent: Generated<string | null>;
+  visiterId: string;
+}
+
+export interface Visiter {
+  createdAt: Generated<Timestamp>;
+  id: string;
 }
 
 export interface DB {
   _prisma_migrations: _PrismaMigrations;
-  Admin: Admin;
-  DiscardedIpAddress: DiscardedIpAddress;
   Visit: Visit;
+  Visiter: Visiter;
 }

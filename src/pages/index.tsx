@@ -5,59 +5,42 @@ import Background from "@/components/Background";
 import ScrollBar from "@/components/ScrollBar";
 import { EmailClipboardNotificationProvider } from "@/EmailClipboardNotificationContext";
 import ClipboardEmailNotification from "@/components/ClipboardEmailNotification";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect } from "react";
+import { useRef } from "react";
+import { useIsBotCrawling } from "@/hooks/useIsBotCrawling";
+import { VisitCreateType, VisitUpdateType } from "@/backend/apiTypes";
 
 const VISIT_UPDATE_INTERVAL = 2000;
 
 export default function Index() {
-  const queryClient = useQueryClient();
+  const isBotCrawling = useIsBotCrawling();
+  const isVisitInitiated = useRef(false);
 
   useQuery({
-    queryKey: ["visitId"],
+    queryKey: ["visit"],
     queryFn: async () => {
-      const res = await axios.post("/api/visit", {
-        time: new Date().toISOString(),
-        referrer: document.referrer,
-      });
-      return res.data.visitId;
-    },
-  });
+      if (isBotCrawling) return null;
 
-  const updateVisit = useMutation({
-    mutationKey: ["updateVisit"],
-    mutationFn: async (visitId: number) => {
-      const res = await axios.put("/api/visit", {
-        time: new Date().toISOString(),
-        visitId: visitId,
-      });
-      return res.data;
-    },
-  });
+      if (!isVisitInitiated.current) {
+        isVisitInitiated.current = true;
 
-  useEffect(() => {
-    let start = false;
+        const res = await axios.post("/api/visit", {
+          time: new Date().toISOString(),
+          referrer: document.referrer,
+        } satisfies VisitCreateType);
 
-    const timeoutId = setTimeout(() => {
-      start = true;
-    }, VISIT_UPDATE_INTERVAL);
+        return res.data;
+      } else {
+        const res = await axios.put("/api/visit", {
+          time: new Date().toISOString(),
+        } satisfies VisitUpdateType);
 
-    const intervalId = setInterval(() => {
-      if (!start) return;
-
-      const visitId = queryClient.getQueryData<number>(["visitId"]);
-      if (visitId !== undefined) {
-        // console.log(visitId);
-        updateVisit.mutate(visitId);
+        return res.data;
       }
-    }, VISIT_UPDATE_INTERVAL);
-
-    return () => {
-      clearInterval(intervalId);
-      clearTimeout(timeoutId);
-    };
-  }, [updateVisit, queryClient]);
+    },
+    refetchInterval: (query) => (query.state.error ? 0 : VISIT_UPDATE_INTERVAL),
+  });
 
   return (
     <EmailClipboardNotificationProvider>

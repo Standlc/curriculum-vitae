@@ -1,5 +1,5 @@
 import { GitHub, Language } from "@mui/icons-material";
-import { useAnimateOnScreen } from "@/useAnimateOnScreen";
+import { useAnimateOnScreen } from "@/hooks/useAnimateOnScreen";
 
 const PROJECTS: {
   title: string;
@@ -12,8 +12,8 @@ const PROJECTS: {
 }[] = [
   {
     title: "Front-end developer at Cyberjobs",
-    // todo: add more details about the company
-    description: "Developement of the chat, back office and other modules.",
+    description:
+      "Developement of the chat, back office and other user-centric interfaces.",
     skills: "React, .NET, SignalR",
     links: [
       {
@@ -86,7 +86,7 @@ const PROJECTS: {
   {
     title: "Distro",
     description:
-      "Full-stack development of an online pong game with a chat leveraging WebSockets for real-time features.",
+      "Full-stack development of an online pong game with a chat, leveraging WebSockets for real-time features.",
     skills: "React, Nest, Docker, PostgreSQL",
     links: [
       {

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { ReactElement, useEffect } from "react";
 
@@ -18,9 +19,16 @@ const AnalyticsLayout = ({ children }: { children: ReactElement }) => {
     if (isAuthorized.isError) {
       router.push("/login");
     }
-  }, [isAuthorized.isError]);
+  }, [isAuthorized.isError, router]);
 
-  return children;
+  return (
+    <>
+      <Head>
+        <meta name="robots" content="noindex" />
+      </Head>
+      {children}
+    </>
+  );
 };
 
 export default AnalyticsLayout;

@@ -53,7 +53,7 @@ const Analytics = () => {
                 display: false,
               },
               tooltip: {
-                enabled: false,
+                // enabled: false,
               },
             },
             responsive: true,
@@ -88,22 +88,13 @@ const Analytics = () => {
         <div className="border border-[rgba(255,255,255,0.1)] flex-1 aspect-square rounded-xl shadow-[0_3px_10px_rgba(0,0,0,0.3)] p-5 bg-[rgba(255,255,255,0.02)]">
           <Doughnut
             data={{
-              labels: anaylytics.data.top_countries
-                .map((c) => c.country)
-                .concat("Rest"),
+              labels: anaylytics.data.countries.map((c) => c.country),
               datasets: [
                 {
-                  data: anaylytics.data.top_countries.map((c) => c.count),
+                  data: anaylytics.data.countries.map((c) => c.count),
                   label: "Views by country",
-                  borderColor: "rgba(255,255,255,0)",
-                  backgroundColor: [
-                    "rgba(255,99,132,1)",
-                    "rgba(54,162,235,1)",
-                    "rgba(255,206,86,1)",
-                    "rgba(75,192,192,1)",
-                    "rgba(153,102,255,1)",
-                    "rgba(255,255,255,0.5)",
-                  ],
+                  borderWidth: 0,
+                  // borderColor: "rgba(255,255,255,0)",
                 },
               ],
             }}
@@ -112,19 +103,13 @@ const Analytics = () => {
         <div className="border border-[rgba(255,255,255,0.1)] flex-1 aspect-square rounded-xl shadow-[0_3px_10px_rgba(0,0,0,0.3)] p-5 bg-[rgba(255,255,255,0.02)]">
           <Doughnut
             data={{
-              labels: anaylytics.data.top_referrers.map((c) => c.referrer),
+              labels: anaylytics.data.referrers.map((c) => c.referrer),
               datasets: [
                 {
-                  data: anaylytics.data.top_referrers.map((c) => c.count),
+                  data: anaylytics.data.referrers.map((c) => c.count),
                   label: "Visits by referrer",
-                  borderColor: "rgba(255,255,255,0)",
-                  backgroundColor: [
-                    "rgba(255,99,132,1)",
-                    "rgba(54,162,235,1)",
-                    "rgba(255,206,86,1)",
-                    "rgba(75,192,192,1)",
-                    "rgba(153,102,255,1)",
-                  ],
+                  borderWidth: 0,
+                  // borderColor: "rgba(255,255,255,0)",
                 },
               ],
             }}

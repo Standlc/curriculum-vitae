@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Visiter" ALTER COLUMN "id" DROP DEFAULT;

@@ -1,3 +1,10 @@
+import * as jose from "jose";
+import {
+  VisitCreateSchema,
+  VisitUpdateSchema,
+  VisiterSchema,
+  VisiterType,
+} from "@/backend/apiTypes";
 import { db } from "@/backend/db";
 import * as formatIp from "ip";
 import { sql } from "kysely";
@@ -23,79 +30,129 @@ const getIpAddress = (req: NextApiRequest) => {
   return ip;
 };
 
-const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
-  const ip = getIpAddress(req);
-  if (ip === undefined) {
-    return res.status(400).json({ message: "No IP address provided" });
-  }
+const createVisiter = async () => {
+  const visiter = await db
+    .insertInto("Visiter")
+    .defaultValues()
+    .returningAll()
+    .executeTakeFirstOrThrow();
 
-  const time = new Date(req.body.time);
+  return visiter;
+};
 
-  const previousVisitSession = await db
-    .selectFrom("Visit")
-    .where("Visit.ip", "=", ip)
-    .where(sql<boolean>`"endAt" >= NOW() - INTERVAL '10 seconds'`)
-    .select(["Visit.endAt", "Visit.id"])
-    .executeTakeFirst();
-
-  if (previousVisitSession) {
-    const updatedVisit = await db
-      .updateTable("Visit")
-      .set({
-        endAt: time,
-      })
-      .where("Visit.id", "=", previousVisitSession.id)
-      .returningAll()
-      .executeTakeFirstOrThrow();
-
-    // console.log(updatedVisit);
-
-    res.status(200).json({ visitId: updatedVisit.id });
-  } else {
-    const response = await fetch(`http://ip-api.com/json/${ip}`);
-    const data = await response.json();
-
-    const newVisit = await db
-      .insertInto("Visit")
-      .values({
-        ip,
-        createdAt: time.toISOString(),
-        endAt: time.toISOString(),
-        country: data.country,
-        countryCode: data.countryCode,
-        region: data.region,
-        regionName: data.regionName,
-        city: data.city,
-        lat: data.lat,
-        lon: data.lon,
-        referrer: req.body.referrer,
-      })
-      .returningAll()
-      .executeTakeFirstOrThrow();
-
-    console.debug(newVisit);
-
-    res.status(200).json({ visitId: newVisit.id });
+const getVisiter = (req: NextApiRequest) => {
+  try {
+    const header = req.headers["x-visiter"];
+    const { data } = VisiterSchema.safeParse(
+      JSON.parse(Array.isArray(header) ? header[0] : header ?? "{}")
+    );
+    return data;
+  } catch (error) {
+    void error;
+    return undefined;
   }
 };
 
-const handleUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
+const setVisiterToken = async (res: NextApiResponse, visiter: VisiterType) => {
+  const visiterToken = await new jose.SignJWT(visiter)
+    .setProtectedHeader({ alg: "HS256" })
+    .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+
+  res.setHeader(
+    "Set-Cookie",
+    `visiterToken=${visiterToken}; HttpOnly; SameSite=Strict; Path=/`
+  );
+};
+
+const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { data: body, success } = VisitCreateSchema.safeParse(req.body);
   const ip = getIpAddress(req);
-  if (ip === undefined) {
-    return res.status(400).json({ message: "No IP address provided" });
+  if (!success || ip === undefined) {
+    return res.status(400).json({ message: "Invalid Request" });
   }
 
-  const time = new Date(req.body.time);
-  console.debug(time);
+  const visitTime = new Date(body.time).toISOString();
 
+  let visiter = getVisiter(req);
+  if (visiter === undefined) {
+    const createdVisiter = await createVisiter();
+    visiter = {
+      id: createdVisiter.id,
+      sessionId: undefined,
+    };
+  } else {
+    const previousVisitSession = await db
+      .selectFrom("Visit")
+      .where("Visit.visiterId", "=", visiter.id)
+      .where(sql<boolean>`"endAt" >= NOW() - INTERVAL '10 seconds'`)
+      .select(["Visit.id"])
+      .executeTakeFirst();
+
+    if (previousVisitSession) {
+      const updatedVisit = await db
+        .updateTable("Visit")
+        .set({
+          endAt: visitTime,
+        })
+        .where("Visit.id", "=", previousVisitSession.id)
+        .returning(["Visit.id"])
+        .executeTakeFirstOrThrow();
+
+      await setVisiterToken(res, {
+        id: visiter.id,
+        sessionId: updatedVisit.id,
+      });
+      return res.status(200).json({ visitId: updatedVisit.id });
+    }
+  }
+
+  const response = await fetch(`http://ip-api.com/json/${ip}`);
+  const data = await response.json();
+
+  const newVisit = await db
+    .insertInto("Visit")
+    .values({
+      ip,
+      visiterId: visiter.id,
+      createdAt: visitTime,
+      endAt: visitTime,
+      country: data.country,
+      countryCode: data.countryCode,
+      region: data.region,
+      regionName: data.regionName,
+      city: data.city,
+      lat: data.lat,
+      lon: data.lon,
+      referrer: body.referrer,
+      userAgent: req.headers["user-agent"],
+    })
+    .returning(["Visit.id"])
+    .executeTakeFirstOrThrow();
+
+  await setVisiterToken(res, { id: visiter.id, sessionId: newVisit.id });
+  res.status(200).json({ visitId: newVisit.id });
+};
+
+const handleUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { data: body, success } = VisitUpdateSchema.safeParse(req.body);
+  const visiter = getVisiter(req);
+
+  if (visiter === undefined) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  if (!success || visiter?.sessionId === undefined) {
+    return res.status(400).send({ message: "Invalid Request" });
+  }
+
+  const visitTime = new Date(body.time).toISOString();
   const updatedVisit = await db
     .updateTable("Visit")
     .set({
-      endAt: time.toISOString(),
+      endAt: visitTime,
     })
-    .where("Visit.ip", "=", ip)
-    .where("Visit.id", "=", req.body.visitId)
-    .returningAll()
+    .where("Visit.id", "=", visiter.sessionId)
+    .returning("Visit.id")
     .executeTakeFirst();
 
   if (!updatedVisit) {
@@ -115,6 +172,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

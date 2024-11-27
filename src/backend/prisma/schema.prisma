@@ -13,12 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Visiter {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  createdAt   DateTime @default(now())
+  visits      Visit[]
+}
+
 model Visit {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
   endAt       DateTime @default(now())
   ip          String
-  referrer    String?   @default("")
+  visiter     Visiter  @relation(fields: [visiterId], references: [id])
+  visiterId   String
+  referrer    String?  @default("")
+  userAgent   String?  @default("")
   country     String?
   countryCode String?
   region      String?
@@ -26,12 +35,4 @@ model Visit {
   city        String?
   lat         Float?
   lon         Float?
-}
-
-model DiscardedIpAddress {
-  ip          String   @id
-}
-
-model Admin {
-  ip          String   @id
 }

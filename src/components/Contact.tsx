@@ -1,4 +1,4 @@
-import { useAnimateOnScreen } from "@/useAnimateOnScreen";
+import { useAnimateOnScreen } from "@/hooks/useAnimateOnScreen";
 import Contacts from "./Contacts";
 
 export default function Contact() {

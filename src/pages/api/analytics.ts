@@ -13,17 +13,19 @@ const handleGet = async (res: NextApiResponse) => {
       return now.toISOString().split("T")[0];
     });
 
-  const query = db
-    .selectFrom("Visit")
-    .select((eb) => eb.fn.countAll<number>().as("total_visits_count"))
-    .select((eb) =>
-      eb.fn.count<number>("ip").distinct().as("unique_visits_count")
-    )
-    .select((eb) =>
+  const query = db.selectFrom("Visit").select([
+    (eb) => eb.fn.countAll<number>().as("total_visits_count"),
+
+    (eb) =>
+      eb.fn
+        .count<number>("Visit.visiterId")
+        .distinct()
+        .as("unique_visits_count"),
+
+    (eb) =>
       jsonArrayFrom(
         eb
           .selectFrom("Visit as v")
-          .groupBy("v.country")
           .where("v.country", "is not", null)
           .select([
             "v.country",
@@ -31,34 +33,35 @@ const handleGet = async (res: NextApiResponse) => {
           ])
           .$castTo<{ country: string; count: number }>()
           .orderBy("count", "desc")
-      ).as("top_countries")
-    )
-    .select((eb) =>
+          .groupBy("v.country")
+      ).as("countries"),
+
+    (eb) =>
       jsonArrayFrom(
         eb
           .selectFrom("Visit")
           .select([sql<string>`DATE("createdAt")`.as("date")])
-          .groupBy("date")
           .where(sql<boolean>`"createdAt" >= NOW() - INTERVAL '30 days'`)
           .select((eb) => eb.fn.countAll<number>().as("count"))
           .orderBy("date")
-      ).as("last_30_days")
-    )
-    .select((eb) =>
+          .groupBy("date")
+      ).as("last_30_days"),
+
+    (eb) =>
       jsonArrayFrom(
         eb
           .selectFrom("Visit")
           .where("referrer", "!=", "")
           .where("referrer", "is not", null)
-          .groupBy("referrer")
           .select([
             "Visit.referrer",
             (eb) => eb.fn.count<number>("referrer").as("count"),
           ])
           .$castTo<{ referrer: string; count: number }>()
           .orderBy("count", "desc")
-      ).as("top_referrers")
-    );
+          .groupBy("referrer")
+      ).as("referrers"),
+  ]);
 
   const visits: Analytics = await query.executeTakeFirstOrThrow();
 
