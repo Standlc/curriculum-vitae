@@ -2,8 +2,12 @@ import { isBotCrawling } from "@/isBotCrawling";
 import { useMemo } from "react";
 
 export const useIsBotCrawling = () => {
-  return useMemo(() => {
+  const isBrowser = typeof window !== "undefined";
+
+  const result = useMemo(() => {
     const userAgent = navigator?.userAgent;
     return isBotCrawling(userAgent);
-  }, [navigator]);
+  }, [isBrowser]);
+
+  return result;
 };
