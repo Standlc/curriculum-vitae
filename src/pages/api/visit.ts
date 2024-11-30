@@ -10,6 +10,14 @@ import * as formatIp from "ip";
 import { sql } from "kysely";
 import { NextApiRequest, NextApiResponse } from "next";
 
+const getDevice = (req: NextApiRequest) => {
+  const mobileRegex =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  const isMobile = mobileRegex.test(req.headers["user-agent"] ?? "");
+
+  return isMobile ? 1 : 2;
+};
+
 const getIpAddress = (req: NextApiRequest) => {
   const forwarded = req.headers["x-forwarded-for"];
   let ip = req.socket.remoteAddress;
@@ -74,7 +82,14 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   const visitTime = new Date(body.time).toISOString();
 
   let visiter = getVisiter(req);
-  if (visiter === undefined) {
+  console.log(visiter);
+
+  const visiterRecord = await db
+    .selectFrom("Visiter")
+    .where("Visiter.id", "=", visiter?.id ?? "")
+    .executeTakeFirst();
+
+  if (visiterRecord === undefined || visiter === undefined) {
     const createdVisiter = await createVisiter();
     visiter = {
       id: createdVisiter.id,
@@ -109,6 +124,8 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   const response = await fetch(`http://ip-api.com/json/${ip}`);
   const data = await response.json();
 
+  const deviceType = getDevice(req);
+
   const newVisit = await db
     .insertInto("Visit")
     .values({
@@ -125,6 +142,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
       lon: data.lon,
       referrer: body.referrer,
       userAgent: req.headers["user-agent"],
+      deviceId: deviceType,
     })
     .returning(["Visit.id"])
     .executeTakeFirstOrThrow();

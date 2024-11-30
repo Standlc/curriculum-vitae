@@ -22,12 +22,12 @@ const AnalyticsLayout = ({ children }: { children: ReactElement }) => {
   }, [isAuthorized.isError, router]);
 
   return (
-    <>
+    <div className="w-full bg-[#0a0a0a]">
       <Head>
         <meta name="robots" content="noindex" />
       </Head>
       {children}
-    </>
+    </div>
   );
 };
 

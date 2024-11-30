@@ -161,21 +161,14 @@ const seedVisits = async () => {
   const sessions = Array(12).fill(0).map(randomSessionDates);
 
   try {
-    const visiters = await db
-      .insertInto("Visiter")
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .defaultValues()
-      .returningAll()
-      .execute();
-
     await db.deleteFrom("Visit").execute();
+    await db.deleteFrom("Visiter").execute();
+
+    for (let i = 0; i < 10; i++) {
+      await db.insertInto("Visiter").defaultValues().execute();
+    }
+
+    const visiters = await db.selectFrom("Visiter").select(["id"]).execute();
 
     await db
       .insertInto("Visit")

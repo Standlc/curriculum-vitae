@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && cd ./src/backend && prisma migrate dev",
+    "build": "next build && npm run migrate && npm run seedDevices",
     "start": "next start",
     "lint": "next lint",
     "codegen": "kysely-codegen --out-file ./src/backend/types.ts",
     "migrate": "cd ./src/backend && prisma migrate dev",
     "generate": "cd ./src/backend && prisma generate",
-    "seed": "npx tsx ./src/backend/seed.ts"
+    "seed": "npx tsx ./src/backend/seed.ts",
+    "seedDevices": "npx tsx ./src/backend/seedDevices.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.13.1",

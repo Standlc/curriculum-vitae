@@ -24,6 +24,7 @@ body {
 /* Hide the scrollbar */
 ::-webkit-scrollbar {
   width: 0em;
+  height: 0em;
 }
 
 ::-webkit-scrollbar-track {
@@ -32,4 +33,36 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: transparent;
+}
+
+/* .loader {
+  width: 40px;
+  aspect-ratio: 1.154;
+  --_g: no-repeat
+    radial-gradient(farthest-side, #ffffff7d 90%, rgba(255, 255, 255, 0));
+  background: var(--_g) 50% 0, var(--_g) 0 100%, var(--_g) 100% 100%;
+  background-size: 30% calc(30% * 1.154);
+  animation: l16 1s infinite;
+} */
+
+@keyframes l16 {
+  50%,
+  100% {
+    background-position: 100% 100%, 50% 0, 0 100%;
+  }
+}
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  --_c: no-repeat radial-gradient(farthest-side, #ffffff7b 90%, #0000);
+  background: var(--_c) top, var(--_c) left, var(--_c) right, var(--_c) bottom;
+  background-size: 10px 10px;
+  animation: l7 1s infinite;
+}
+
+@keyframes l7 {
+  to {
+    transform: rotate(0.5turn);
+  }
 }

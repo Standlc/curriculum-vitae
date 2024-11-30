@@ -22,30 +22,37 @@ export interface _PrismaMigrations {
   started_at: Generated<Timestamp>;
 }
 
+export interface Device {
+  id: number;
+  type: string;
+}
+
 export interface Visit {
   city: string | null;
   country: string | null;
   countryCode: string | null;
   createdAt: Generated<Timestamp>;
+  deviceId: number | null;
   endAt: Generated<Timestamp>;
   id: Generated<number>;
   ip: string;
   lat: number | null;
   lon: number | null;
-  referrer: Generated<string | null>;
+  referrer: string | null;
   region: string | null;
   regionName: string | null;
-  userAgent: Generated<string | null>;
+  userAgent: string | null;
   visiterId: string;
 }
 
 export interface Visiter {
   createdAt: Generated<Timestamp>;
-  id: string;
+  id: Generated<string>;
 }
 
 export interface DB {
   _prisma_migrations: _PrismaMigrations;
+  Device: Device;
   Visit: Visit;
   Visiter: Visiter;
 }

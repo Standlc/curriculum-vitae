@@ -2,16 +2,20 @@ import AnalyticsLayout from "@/components/AnalyticsLayout";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { FormEvent, ReactElement } from "react";
+import { FormEvent, ReactElement, useState } from "react";
 
 const Login = () => {
   const router = useRouter();
+  const [isError, setIsError] = useState(false);
 
   const login = useMutation({
     mutationKey: ["login"],
     mutationFn: async (password: string) => {
       const res = await axios.post("/api/auth", { password });
       return res.data;
+    },
+    onError: () => {
+      setIsError(true);
     },
     onSuccess: () => {
       router.push("/analytics");
@@ -28,20 +32,23 @@ const Login = () => {
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <form
-        className="font-mono relative flex items-center justify-center"
+        className={`font-mono relative flex items-center justify-center`}
         onSubmit={handlePasswordSubmit}
       >
         <input
+          disabled={login.isPending}
           type="password"
           name="password"
           placeholder="Enter the super secret password"
           className={`w-[300px] font-mono rounded-2xl px-5 py-3 outline-none bg-[rgba(255,255,255,0.02)] border ${
-            login.isError
+            isError
               ? "border-[rgba(255,0,0,0.2)] focus:shadow-[0_0_0_3px_rgba(255,0,0,0.1)]"
               : "border-[rgba(255,255,255,0.1)] focus:shadow-[0_0_0_3px_rgba(255,255,255,0.05)]"
-          } [transition:box-shadow_0.3s]`}
+          } ${
+            login.isPending ? "opacity-70" : ""
+          } transition-opacity [transition:box-shadow_0.3s]`}
         />
-        {login.isError ? (
+        {isError ? (
           <span className="text-red-800 absolute -bottom-5 translate-y-full">
             Ah ah, you didn&apos;t say the magic word!
           </span>
