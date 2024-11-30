@@ -8,9 +8,10 @@ import { Line } from "react-chartjs-2";
 import { useGetTimeFromSeconds } from "@/hooks/useGetTimeFromSeconds";
 import { getDomainName } from "./ReferrersCard";
 import { KeyboardArrowDown, TrendingUp } from "@mui/icons-material";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
 const MONTHS = [
   "Jan",
@@ -71,21 +72,37 @@ export const VisitsGraph = ({
   const [timeOption, setTimeOption] = useState<
     AnalyticsTimeOptionsType | undefined
   >(undefined);
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
-  const analyticsQuery = useQuery<AnalyticsOverSomeTime>({
+  const analyticsQuery = useQuery<AnalyticsOverSomeTime, AxiosError>({
     queryKey: ["analytics-time-option", timeOption],
     queryFn: async () => {
-      console.log("fetching", timeOption);
+      // console.log("fetching", timeOption, "days");
       const res = await axios.get<AnalyticsOverSomeTime>(
         `/api/analytics?time=${timeOption}`
       );
       return res.data;
     },
     enabled: !!timeOption,
-    placeholderData: analytics,
+    placeholderData: (prev) => prev ?? analytics,
     staleTime: 1000 * 60 * 1,
+    gcTime: 1000 * 60 * 1,
     select: (data) => fillMissingGraphDays(data),
   });
+
+  useEffect(() => {
+    queryClient.setQueryData(
+      ["analytics-time-option", analytics.timePeriod],
+      analytics
+    );
+  }, [analytics, queryClient]);
+
+  useEffect(() => {
+    if (analyticsQuery.error?.status === 401) {
+      router.push("/login");
+    }
+  }, [analyticsQuery.error]);
 
   const graphData = analyticsQuery.data?.visits_per_day;
 
@@ -114,6 +131,7 @@ export const VisitsGraph = ({
               defaultValue={timeOption ?? "30"}
               name="time"
               id=""
+              disabled={analyticsQuery.isFetching}
               onChange={(e) => {
                 const timePeriod = Number(e.target.value);
                 if (AnalyticsTimeOptions.includes(timePeriod as any)) {

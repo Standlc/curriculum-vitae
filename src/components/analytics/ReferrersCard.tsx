@@ -6,7 +6,7 @@ export const getDomainName = (url: string) => {
     const hostname = new URL(url).hostname;
     return hostname;
   } catch (err) {
-    console.error(err);
+    void err;
     return url;
   }
 };

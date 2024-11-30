@@ -92,7 +92,7 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
               {analytics.devices[0]?.type ?? "No data"}
             </span>
             <span className="opacity-text">
-              Mostly used
+              Mostly used{" "}
               {!!analytics.devices[0] &&
                 `(${Math.floor(
                   (analytics.devices[0].count / analytics.total_visits_count) *

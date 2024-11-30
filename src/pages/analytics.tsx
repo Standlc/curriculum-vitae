@@ -40,7 +40,7 @@ const Analytics = () => {
 
       <VisitsGraph analytics={anaylytics.data.analyticsOverSomeTime} />
 
-      <div className="flex gap-5">
+      <div className="flex gap-5 flex-wrap">
         <CountriesCard
           countries={anaylytics.data.countries}
           total_visits_count={anaylytics.data.total_visits_count}
