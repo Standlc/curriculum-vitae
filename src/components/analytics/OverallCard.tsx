@@ -38,24 +38,30 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
 
           <div className="flex flex-col gap-0 h-full justify-center">
             <span className="text-xl font-semibold">
-              {avg_visit_time.hours ? (
-                <span>
-                  {avg_visit_time.hours}
-                  <span className="text-sm">h</span>
-                </span>
-              ) : null}{" "}
-              {avg_visit_time.minutes ? (
-                <span>
-                  {avg_visit_time.minutes}
-                  <span className="text-sm">m</span>
-                </span>
-              ) : null}{" "}
-              {avg_visit_time.seconds ? (
-                <span>
-                  {avg_visit_time.seconds}
-                  <span className="text-sm">s</span>
-                </span>
-              ) : null}
+              {analytics.avg_visit_time !== null ? (
+                <>
+                  {avg_visit_time.hours ? (
+                    <span>
+                      {avg_visit_time.hours}
+                      <span className="text-sm">h</span>
+                    </span>
+                  ) : null}{" "}
+                  {avg_visit_time.minutes ? (
+                    <span>
+                      {avg_visit_time.minutes}
+                      <span className="text-sm">m</span>
+                    </span>
+                  ) : null}{" "}
+                  {avg_visit_time.seconds ? (
+                    <span>
+                      {avg_visit_time.seconds}
+                      <span className="text-sm">s</span>
+                    </span>
+                  ) : null}
+                </>
+              ) : (
+                "No data"
+              )}
             </span>
             <span className="opacity-text">Average visit time</span>
           </div>
@@ -64,15 +70,18 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
 
           <div className="flex flex-col gap-0 h-full justify-center">
             <span className="text-xl font-semibold">
-              {getDomainName(analytics.referrers[0].referrer)}
+              {analytics.referrers[0]
+                ? getDomainName(analytics.referrers[0].referrer)
+                : "No data"}
             </span>
             <span className="opacity-text">
-              Top referrer (
-              {Math.floor(
-                (analytics.referrers[0].count / analytics.total_visits_count) *
-                  100
-              )}
-              %)
+              Top traffic source{" "}
+              {!!analytics.referrers[0] &&
+                `(${Math.floor(
+                  (analytics.referrers[0].count /
+                    analytics.total_visits_count) *
+                    100
+                )}%)`}
             </span>
           </div>
 
@@ -80,15 +89,15 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
 
           <div className="flex flex-col gap-0 h-full justify-center">
             <span className="text-xl font-semibold capitalize">
-              {analytics.devices[0].type}
+              {analytics.devices[0]?.type ?? "No data"}
             </span>
             <span className="opacity-text">
-              Most used (
-              {Math.floor(
-                (analytics.devices[0].count / analytics.total_visits_count) *
-                  100
-              )}
-              %)
+              Mostly used
+              {!!analytics.devices[0] &&
+                `(${Math.floor(
+                  (analytics.devices[0].count / analytics.total_visits_count) *
+                    100
+                )}%)`}
             </span>
           </div>
         </div>

@@ -67,9 +67,7 @@ export const VisitsGraph = ({
 }: {
   analytics: AnalyticsOverSomeTime;
 }) => {
-  const avg_visit_time = useGetTimeFromSeconds(
-    analytics.analytics?.avg_visit_time ?? 0
-  );
+  const avg_visit_time = useGetTimeFromSeconds(analytics.avg_visit_time ?? 0);
   const [timeOption, setTimeOption] = useState<
     AnalyticsTimeOptionsType | undefined
   >(undefined);
@@ -89,12 +87,9 @@ export const VisitsGraph = ({
     select: (data) => fillMissingGraphDays(data),
   });
 
-  const analyticsData = analyticsQuery.data?.analytics;
   const graphData = analyticsQuery.data?.visits_per_day;
 
-  console.log("rendering");
-
-  if (!graphData || !analyticsData) {
+  if (!graphData || !analyticsQuery.data) {
     return null;
   }
 
@@ -143,12 +138,12 @@ export const VisitsGraph = ({
           <div className="flex gap-4 items-center justify-evenly min-w-[600px]">
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold leading-tight">
-                +{analyticsData?.visits_count}{" "}
+                +{analyticsQuery.data.visits_count ?? 0}
               </h1>
               <span className="font-normal opacity-text text-xs">
                 Visits{" "}
                 {/* <span className="text-sm opacity-text font-normal">
-                ({analyticsData?.visitors_count} unique)
+                ({analyticsQuery.data.visitors_count} unique)
               </span> */}
               </span>
             </div>
@@ -157,7 +152,7 @@ export const VisitsGraph = ({
 
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold leading-tight">
-                +{analyticsData?.new_visitors_count}{" "}
+                +{analyticsQuery.data.new_visitors_count ?? 0}
               </h1>
               <span className="font-normal opacity-text text-xs">
                 New visitors
@@ -168,24 +163,30 @@ export const VisitsGraph = ({
 
             <div className="flex flex-col text-lg font-semibold">
               <div className="leading-tight">
-                {avg_visit_time.hours ? (
-                  <span>
-                    {avg_visit_time.hours}
-                    <span className="text-sm">h</span>
-                  </span>
-                ) : null}{" "}
-                {avg_visit_time.minutes ? (
-                  <span>
-                    {avg_visit_time.minutes}
-                    <span className="text-sm">m</span>
-                  </span>
-                ) : null}{" "}
-                {avg_visit_time.seconds ? (
-                  <span>
-                    {avg_visit_time.seconds}
-                    <span className="text-sm">s</span>
-                  </span>
-                ) : null}{" "}
+                {analyticsQuery.data.avg_visit_time !== null ? (
+                  <>
+                    {avg_visit_time.hours ? (
+                      <span>
+                        {avg_visit_time.hours}
+                        <span className="text-sm">h</span>
+                      </span>
+                    ) : null}{" "}
+                    {avg_visit_time.minutes ? (
+                      <span>
+                        {avg_visit_time.minutes}
+                        <span className="text-sm">m</span>
+                      </span>
+                    ) : null}{" "}
+                    {avg_visit_time.seconds ? (
+                      <span>
+                        {avg_visit_time.seconds}
+                        <span className="text-sm">s</span>
+                      </span>
+                    ) : null}{" "}
+                  </>
+                ) : (
+                  "No data"
+                )}
               </div>
               <span className="font-normal opacity-text text-xs">
                 Avg. visit time
@@ -196,16 +197,18 @@ export const VisitsGraph = ({
 
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold leading-tight">
-                {getDomainName(analyticsData?.top_referrer ?? "")}{" "}
+                {analyticsQuery.data.top_referrer
+                  ? getDomainName(analyticsQuery.data.top_referrer)
+                  : "No data"}
               </h1>
               <span className="font-normal opacity-text text-xs">
-                Top referrer (
-                {Math.floor(
-                  ((analyticsData?.top_referrer_count ?? 0) /
-                    (analyticsData?.visits_count ?? 1)) *
-                    100
-                )}
-                %)
+                Top traffic source{" "}
+                {analyticsQuery.data.top_referrer_count !== null &&
+                  `${Math.floor(
+                    (analyticsQuery.data.top_referrer_count /
+                      (analyticsQuery.data.visits_count ?? 1)) *
+                      100
+                  )}%)`}
               </span>
             </div>
 
@@ -213,16 +216,16 @@ export const VisitsGraph = ({
 
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold leading-tight">
-                {analyticsData?.top_device}{" "}
+                {analyticsQuery.data.top_device ?? "No data"}
               </h1>
               <span className="font-normal opacity-text text-xs">
-                Most used (
-                {Math.floor(
-                  ((analyticsData?.top_device_count ?? 0) /
-                    (analyticsData?.visits_count ?? 1)) *
-                    100
-                )}
-                %)
+                Mostly used{" "}
+                {analyticsQuery.data.top_device_count !== null &&
+                  `(${Math.floor(
+                    (analyticsQuery.data.top_device_count /
+                      (analyticsQuery.data.visits_count ?? 1)) *
+                      100
+                  )}%)`}
               </span>
             </div>
           </div>

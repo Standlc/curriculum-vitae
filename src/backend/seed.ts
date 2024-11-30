@@ -23,6 +23,7 @@ const DUMMY_DATA = [
     lon: -97.822,
     regionName: "California",
     referrer: "google.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.177",
@@ -35,6 +36,7 @@ const DUMMY_DATA = [
     lon: -79.383,
     regionName: "Ontario",
     referrer: "linkedin.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.178",
@@ -47,6 +49,7 @@ const DUMMY_DATA = [
     lon: -0.127,
     regionName: "England",
     referrer: "facebook.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.179",
@@ -59,6 +62,7 @@ const DUMMY_DATA = [
     lon: 13.405,
     regionName: "Berlin",
     referrer: "twitter.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.180",
@@ -71,6 +75,7 @@ const DUMMY_DATA = [
     lon: 151.209,
     regionName: "New South Wales",
     referrer: "linkedin.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.181",
@@ -83,6 +88,7 @@ const DUMMY_DATA = [
     lon: 2.352,
     regionName: "Île-de-France",
     referrer: "linkedin.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.182",
@@ -95,6 +101,7 @@ const DUMMY_DATA = [
     lon: -3.703,
     regionName: "Madrid",
     referrer: "twitter.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.183",
@@ -107,6 +114,7 @@ const DUMMY_DATA = [
     lon: 12.496,
     regionName: "Lazio",
     referrer: "twitter.com",
+    device: "desktop",
   },
   {
     ip: "192.168.0.184",
@@ -118,6 +126,7 @@ const DUMMY_DATA = [
     lat: 35.689,
     lon: 139.691,
     regionName: "Tokyo",
+    device: "mobile",
   },
   {
     ip: "192.168.0.183",
@@ -130,6 +139,7 @@ const DUMMY_DATA = [
     lon: -43.172,
     regionName: "Rio de Janeiro",
     referrer: "linkedin.com",
+    device: "mobile",
   },
   {
     ip: "192.168.0.184",
@@ -142,6 +152,7 @@ const DUMMY_DATA = [
     lon: 72.877,
     regionName: "Maharashtra",
     referrer: "linkedin.com",
+    device: "mobile",
   },
   {
     ip: "192.168.0.185",
@@ -154,6 +165,7 @@ const DUMMY_DATA = [
     lon: 18.424,
     regionName: "Western Cape",
     referrer: "linkedin.com",
+    device: "mobile",
   },
 ];
 

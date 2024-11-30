@@ -140,7 +140,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
       city: data.city,
       lat: data.lat,
       lon: data.lon,
-      referrer: body.referrer,
+      referrer: body.referrer !== "" ? body.referrer : "Direct",
       userAgent: req.headers["user-agent"],
       deviceId: deviceType,
     })

@@ -27,9 +27,9 @@ export const ReferrersCard = ({
         </h1>
       </div>
 
-      <div className="flex flex-col gap-2 max-h-[300px] h-full overflow-y-scroll -mx-2 -mb-2 pt-3">
+      <div className="flex flex-col gap-2 max-h-[300px] min-h-[200px] overflow-y-scroll -mx-2 -mb-2 pt-3">
         {!referrers.length ? (
-          <div className="opacity-text text-lg h-full w-full flex items-center justify-center">
+          <div className="opacity-text text-lg min-h-[inherit] w-full flex items-center justify-center">
             No data
           </div>
         ) : (

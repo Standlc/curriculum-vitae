@@ -1,6 +1,6 @@
 import { db } from "@/backend/db";
 import { NotNull, sql } from "kysely";
-import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
+import { jsonArrayFrom } from "kysely/helpers/postgres";
 import { NextApiRequest, NextApiResponse } from "next";
 import {
   Analytics,
@@ -63,6 +63,7 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
     )
 
     .selectFrom("Visit")
+    .where(sql<boolean>`"createdAt" >= NOW() - MAKE_INTERVAL(days => ${time})`)
     .select((eb) => [
       jsonArrayFrom(
         eb
@@ -76,56 +77,48 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
           .groupBy("date")
       ).as("visits_per_day"),
 
-      jsonObjectFrom(
-        eb.selectFrom("top_referrer").select((eb) => [
-          "top_referrer.referrer as top_referrer",
-          "top_referrer.count as top_referrer_count",
+      sql<number>`EXTRACT(EPOCH FROM AVG("endAt" - "createdAt"))`.as(
+        "avg_visit_time"
+      ),
 
-          eb
-            .selectFrom("top_device")
-            .select(["top_device.type"])
-            .as("top_device"),
+      eb.selectFrom("top_device").select(["top_device.type"]).as("top_device"),
 
-          eb
-            .selectFrom("top_device")
-            .select(["top_device.count"])
-            .as("top_device_count"),
+      eb
+        .selectFrom("top_device")
+        .select(["top_device.count"])
+        .as("top_device_count"),
 
-          eb
-            .selectFrom("Visit")
-            .where(
-              sql<boolean>`"createdAt" >= NOW() - MAKE_INTERVAL(days => ${time})`
-            )
-            .select([
-              sql<number>`EXTRACT(EPOCH FROM AVG("endAt" - "createdAt"))`.as(
-                "time"
-              ),
-            ])
-            .as("avg_visit_time"),
+      eb
+        .selectFrom("total_visits")
+        .select(["total_visits.visitors_count"])
+        .as("visitors_count"),
 
-          eb
-            .selectFrom("total_visits")
-            .select(["total_visits.visitors_count"])
-            .as("visitors_count"),
+      eb
+        .selectFrom("total_visits")
+        .select(["total_visits.visits_count"])
+        .as("visits_count"),
 
-          eb
-            .selectFrom("total_visits")
-            .select(["total_visits.visits_count"])
-            .as("visits_count"),
-
-          eb
-            .selectFrom("Visiter")
-            .where(
-              "createdAt",
-              ">=",
-              sql<Date>`NOW() - MAKE_INTERVAL(days => ${time})`
-            )
-            .select((eb) => [
-              eb.fn.count<number>("Visiter.id").distinct().as("count"),
-            ])
-            .as("new_visitors_count"),
+      eb
+        .selectFrom("Visiter")
+        .where(
+          "createdAt",
+          ">=",
+          sql<Date>`NOW() - MAKE_INTERVAL(days => ${time})`
+        )
+        .select((eb) => [
+          eb.fn.count<number>("Visiter.id").distinct().as("count"),
         ])
-      ).as("analytics"),
+        .as("new_visitors_count"),
+
+      eb
+        .selectFrom("top_referrer")
+        .select(["top_referrer.referrer as top_referrer"])
+        .as("top_referrer"),
+
+      eb
+        .selectFrom("top_referrer")
+        .select(["top_referrer.count as top_referrer_count"])
+        .as("top_referrer_count"),
     ])
     .executeTakeFirstOrThrow();
 
@@ -155,75 +148,70 @@ const handleGet = async (res: NextApiResponse) => {
     )
 
     .selectFrom("Visit")
-    .select([
-      (eb) =>
-        eb.selectFrom("visits_count").select("count").as("total_visits_count"),
-      (eb) =>
+    .select((eb) => [
+      eb.selectFrom("visits_count").select("count").as("total_visits_count"),
+      eb
+        .selectFrom("times")
+        .select([
+          sql<number>`EXTRACT(EPOCH FROM AVG("time"))`.as("avg_visit_time"),
+        ])
+        .as("avg_visit_time"),
+
+      eb.fn
+        .count<number>("Visit.visiterId")
+        .distinct()
+        .as("unique_visits_count"),
+
+      jsonArrayFrom(
         eb
-          .selectFrom("times")
+          .selectFrom("Visit as v")
+          .where("v.country", "is not", null)
           .select([
-            sql<number>`EXTRACT(EPOCH FROM AVG("time"))`.as("avg_visit_time"),
+            "v.country",
+            (eb) => eb.fn.count<number>("v.country").as("count"),
           ])
-          .as("avg_visit_time"),
+          .$narrowType<{ country: NotNull }>()
+          .orderBy("count", "desc")
+          .groupBy("v.country")
+          .limit(6)
+      ).as("countries"),
 
-      (eb) =>
-        eb.fn
-          .count<number>("Visit.visiterId")
-          .distinct()
-          .as("unique_visits_count"),
+      jsonArrayFrom(
+        eb
+          .selectFrom("Visit")
+          .where("referrer", "!=", "")
+          .where("referrer", "is not", null)
+          .select([
+            "Visit.referrer",
+            (eb) => eb.fn.count<number>("referrer").as("count"),
+          ])
+          .$castTo<{ referrer: string; count: number }>()
+          .orderBy("count", "desc")
+          .groupBy("referrer")
+      ).as("referrers"),
 
-      (eb) =>
-        jsonArrayFrom(
-          eb
-            .selectFrom("Visit as v")
-            .where("v.country", "is not", null)
-            .select([
-              "v.country",
-              (eb) => eb.fn.count<number>("v.country").as("count"),
-            ])
-            .$narrowType<{ country: NotNull }>()
-            .orderBy("count", "desc")
-            .groupBy("v.country")
-            .limit(6)
-        ).as("countries"),
-
-      (eb) =>
-        jsonArrayFrom(
-          eb
-            .selectFrom("Visit")
-            .where("referrer", "!=", "")
-            .where("referrer", "is not", null)
-            .select([
-              "Visit.referrer",
-              (eb) => eb.fn.count<number>("referrer").as("count"),
-            ])
-            .$castTo<{ referrer: string; count: number }>()
-            .orderBy("count", "desc")
-            .groupBy("referrer")
-        ).as("referrers"),
-
-      (eb) =>
-        jsonArrayFrom(
-          eb
-            .selectFrom("Visit")
-            .innerJoin("Device", "Device.id", "Visit.deviceId")
-            .select([
-              (eb) => eb.fn.count<number>("deviceId").as("count"),
-              "Device.type",
-            ])
-            .groupBy("Device.type")
-            .orderBy("count", "desc")
-        ).as("devices"),
+      jsonArrayFrom(
+        eb
+          .selectFrom("Visit")
+          .innerJoin("Device", "Device.id", "Visit.deviceId")
+          .select([
+            (eb) => eb.fn.count<number>("deviceId").as("count"),
+            "Device.type",
+          ])
+          .groupBy("Device.type")
+          .orderBy("count", "desc")
+      ).as("devices"),
     ])
     .$narrowType<{ total_visits_count: NotNull }>();
 
   const allTimeAnalytics = await query.executeTakeFirstOrThrow();
+
   const analyticsOverSomeTime: AnalyticsOverSomeTime =
     await getAnalyticsOverSomeTime(30);
 
   const data: Analytics = {
     ...allTimeAnalytics,
-    analyticsOverSomeTime: analyticsOverSomeTime,
+    analyticsOverSomeTime,
   };
 
   res.status(200).json(data);

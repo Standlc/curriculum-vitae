@@ -21,9 +21,8 @@ export interface Analytics {
 
 export type AnalyticsOverSomeTime = {
   visits_per_day: DayAnalytics[];
-  analytics: PeriodAnalytics | null;
   timePeriod: AnalyticsTimeOptionsType;
-};
+} & PeriodAnalytics;
 
 export type DayAnalytics = {
   date: string;
