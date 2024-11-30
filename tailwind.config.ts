@@ -31,7 +31,6 @@ export default {
         "fade-in": "fade-in 1s cubic-bezier(0.5,0,0,1) both",
         "fade-in-right": "fade-in-right 1s cubic-bezier(0.5,0,0,1) both",
         "menu-fade-in": "menu-fade-in 0.5s cubic-bezier(0.5,0,0,1) both",
-        "loading-spin": "loading-spin 1s linear infinite",
         "fade-in-basic": "fade-in 0.5s cubic-bezier(0.5,0,0,1) both",
       },
       keyframes: {
@@ -74,14 +73,6 @@ export default {
           "100%": {
             opacity: "1",
             backdropFilter: "blur(5px)",
-          },
-        },
-        "loading-spin": {
-          "0%": {
-            transform: "rotate(0deg)",
-          },
-          "100%": {
-            transform: "rotate(360deg)",
           },
         },
         "fade-in-basic": {

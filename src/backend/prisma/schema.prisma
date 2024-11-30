@@ -13,10 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Visiter {
+model Visitor {
   id          String   @id @default(dbgenerated("gen_random_uuid()"))
   createdAt   DateTime @default(now())
   visits      Visit[]
+  blackListed BlackListedVisitor?
 }
 
 model Device {
@@ -30,8 +31,8 @@ model Visit {
   createdAt   DateTime @default(now())
   endAt       DateTime @default(now())
   ip          String
-  visiter     Visiter  @relation(fields: [visiterId], references: [id])
-  visiterId   String
+  visitor     Visitor  @relation(fields: [visitorId], references: [id])
+  visitorId   String
   device      Device?  @relation(fields: [deviceId], references: [id])
   deviceId    Int?
   referrer    String?
@@ -43,4 +44,9 @@ model Visit {
   city        String?
   lat         Float?
   lon         Float?
+}
+
+model BlackListedVisitor {
+  visitor Visitor @relation(fields: [visitorId], references: [id])
+  visitorId String @id
 }

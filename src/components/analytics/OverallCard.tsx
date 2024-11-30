@@ -17,7 +17,7 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
       </div>
 
       <div className="overflow-x-scroll">
-        <div className="flex gap-5 justify-evenly items-center pt-5 min-w-[700px]">
+        <div className="flex gap-5 justify-evenly items-center pt-5 min-w-[750px]">
           <div className="flex flex-col gap-0 h-full justify-center">
             <span className="text-xl font-semibold">
               {analytics.total_visits_count ?? 0}
@@ -31,7 +31,7 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
             <span className="text-xl font-semibold">
               {analytics.unique_visits_count}
             </span>
-            <span className="opacity-text">Unique visiters</span>
+            <span className="opacity-text">Unique visitors</span>
           </div>
 
           <div className="w-[1px] h-[30px] bg-white bg-opacity-10"></div>

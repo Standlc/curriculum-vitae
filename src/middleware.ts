@@ -19,17 +19,17 @@ export const isAuthenticated = async (req: NextRequest) => {
     );
     return true;
   } catch (error) {
-    console.debug(error);
+    void error;
     return false;
   }
 };
 
-const getVisiter = async (req: NextRequest) => {
+const authenticateVisitor = async (req: NextRequest) => {
   const cookies = req.cookies;
   const token = cookies.get("visiterToken")?.value;
 
   if (!token) {
-    return undefined;
+    throw new Error("No token found");
   }
 
   const visiter = await jose.jwtVerify(
@@ -62,12 +62,14 @@ export const middleware = async (req: NextRequest) => {
     }
 
     try {
-      const visiter = await getVisiter(req);
+      const visiter = await authenticateVisitor(req);
+
       const headers = new Headers(req.headers);
       headers.set("x-visiter", JSON.stringify(visiter));
+
       return NextResponse.next({ request: { headers } });
     } catch (error) {
-      console.error(error);
+      void error;
       // Do nothing, a new token will be created
     }
   }

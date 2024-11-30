@@ -22,6 +22,10 @@ export interface _PrismaMigrations {
   started_at: Generated<Timestamp>;
 }
 
+export interface BlackListedVisitor {
+  visitorId: string;
+}
+
 export interface Device {
   id: number;
   type: string;
@@ -42,17 +46,18 @@ export interface Visit {
   region: string | null;
   regionName: string | null;
   userAgent: string | null;
-  visiterId: string;
+  visitorId: string;
 }
 
-export interface Visiter {
+export interface Visitor {
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
 }
 
 export interface DB {
   _prisma_migrations: _PrismaMigrations;
+  BlackListedVisitor: BlackListedVisitor;
   Device: Device;
   Visit: Visit;
-  Visiter: Visiter;
+  Visitor: Visitor;
 }

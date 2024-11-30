@@ -28,24 +28,21 @@ const getIpAddress = (req: NextApiRequest) => {
     ip = forwarded.split(",")[0].trim();
   }
 
-  // console.log(forwarded, ip);
-
   if (ip) {
     ip = formatIp.toString(formatIp.toBuffer(ip));
   }
-  // console.log(ip);
 
   return ip;
 };
 
 const createVisiter = async () => {
-  const visiter = await db
-    .insertInto("Visiter")
+  const visitor = await db
+    .insertInto("Visitor")
     .defaultValues()
     .returningAll()
     .executeTakeFirstOrThrow();
 
-  return visiter;
+  return visitor;
 };
 
 const getVisiter = (req: NextApiRequest) => {
@@ -61,8 +58,8 @@ const getVisiter = (req: NextApiRequest) => {
   }
 };
 
-const setVisiterToken = async (res: NextApiResponse, visiter: VisiterType) => {
-  const visiterToken = await new jose.SignJWT(visiter)
+const setVisiterToken = async (res: NextApiResponse, visitor: VisiterType) => {
+  const visiterToken = await new jose.SignJWT(visitor)
     .setProtectedHeader({ alg: "HS256" })
     .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
@@ -72,33 +69,63 @@ const setVisiterToken = async (res: NextApiResponse, visiter: VisiterType) => {
   );
 };
 
-const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
+const checkVisitorMiddleware = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  handler: (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    visitor: VisiterType | undefined
+  ) => Promise<void> | Promise<any>
+) => {
+  let visitor = getVisiter(req);
+
+  if (visitor) {
+    const visitorRecord = await db
+      .selectFrom("Visitor")
+      .where("id", "=", visitor.id)
+      .select("id")
+      .executeTakeFirst();
+
+    if (visitorRecord) {
+      const blackListedVisitor = await db
+        .selectFrom("BlackListedVisitor")
+        .where("visitorId", "=", visitorRecord.id)
+        .executeTakeFirst();
+
+      if (blackListedVisitor) {
+        return res.status(403).json({ message: "Visitor is blacklisted" });
+      }
+    } else {
+      visitor = undefined;
+    }
+  }
+
+  await handler(req, res, visitor);
+};
+
+const handlePost = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  visitor: VisiterType | undefined
+) => {
   const { data: body, success } = VisitCreateSchema.safeParse(req.body);
   const ip = getIpAddress(req);
   if (!success || ip === undefined) {
     return res.status(400).json({ message: "Invalid Request" });
   }
-
   const visitTime = new Date(body.time).toISOString();
 
-  let visiter = getVisiter(req);
-  console.log(visiter);
-
-  const visiterRecord = await db
-    .selectFrom("Visiter")
-    .where("Visiter.id", "=", visiter?.id ?? "")
-    .executeTakeFirst();
-
-  if (visiterRecord === undefined || visiter === undefined) {
+  if (!visitor) {
     const createdVisiter = await createVisiter();
-    visiter = {
+    visitor = {
       id: createdVisiter.id,
-      sessionId: undefined,
+      sessionId: 0, // won't be used
     };
   } else {
     const previousVisitSession = await db
       .selectFrom("Visit")
-      .where("Visit.visiterId", "=", visiter.id)
+      .where("Visit.visitorId", "=", visitor.id)
       .where(sql<boolean>`"endAt" >= NOW() - INTERVAL '10 seconds'`)
       .select(["Visit.id"])
       .executeTakeFirst();
@@ -114,7 +141,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
         .executeTakeFirstOrThrow();
 
       await setVisiterToken(res, {
-        id: visiter.id,
+        id: visitor.id,
         sessionId: updatedVisit.id,
       });
       return res.status(200).json({ visitId: updatedVisit.id });
@@ -130,7 +157,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     .insertInto("Visit")
     .values({
       ip,
-      visiterId: visiter.id,
+      visitorId: visitor.id,
       createdAt: visitTime,
       endAt: visitTime,
       country: data.country,
@@ -147,19 +174,21 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     .returning(["Visit.id"])
     .executeTakeFirstOrThrow();
 
-  await setVisiterToken(res, { id: visiter.id, sessionId: newVisit.id });
+  await setVisiterToken(res, { id: visitor.id, sessionId: newVisit.id });
   res.status(200).json({ visitId: newVisit.id });
 };
 
-const handleUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { data: body, success } = VisitUpdateSchema.safeParse(req.body);
-  const visiter = getVisiter(req);
-
-  if (visiter === undefined) {
+const handleUpdate = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  visitor: VisiterType | undefined
+) => {
+  if (!visitor) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  if (!success || visiter?.sessionId === undefined) {
+  const { data: body, success } = VisitUpdateSchema.safeParse(req.body);
+  if (!success || visitor?.sessionId === undefined) {
     return res.status(400).send({ message: "Invalid Request" });
   }
 
@@ -169,7 +198,7 @@ const handleUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
     .set({
       endAt: visitTime,
     })
-    .where("Visit.id", "=", visiter.sessionId)
+    .where("Visit.id", "=", visitor.sessionId)
     .returning("Visit.id")
     .executeTakeFirst();
 
@@ -182,9 +211,9 @@ const handleUpdate = async (req: NextApiRequest, res: NextApiResponse) => {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.method === "POST") {
-      await handlePost(req, res);
+      await checkVisitorMiddleware(req, res, handlePost);
     } else if (req.method === "PUT") {
-      await handleUpdate(req, res);
+      await checkVisitorMiddleware(req, res, handleUpdate);
     } else {
       res.status(405).json({ message: "Method not allowed" });
     }

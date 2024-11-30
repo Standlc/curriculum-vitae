@@ -19,7 +19,7 @@ const Analytics = () => {
     },
   });
 
-  if (anaylytics.isLoading || !anaylytics.data) {
+  if (!anaylytics.data) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center animate-fade-in-basic">
         <div className="loader"></div>

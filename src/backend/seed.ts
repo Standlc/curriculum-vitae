@@ -174,13 +174,13 @@ const seedVisits = async () => {
 
   try {
     await db.deleteFrom("Visit").execute();
-    await db.deleteFrom("Visiter").execute();
+    await db.deleteFrom("Visitor").execute();
 
     for (let i = 0; i < 10; i++) {
-      await db.insertInto("Visiter").defaultValues().execute();
+      await db.insertInto("Visitor").defaultValues().execute();
     }
 
-    const visiters = await db.selectFrom("Visiter").select(["id"]).execute();
+    const visiters = await db.selectFrom("Visitor").select(["id"]).execute();
 
     await db
       .insertInto("Visit")
@@ -188,7 +188,7 @@ const seedVisits = async () => {
         DUMMY_DATA.map((d, i) => {
           return {
             ...d,
-            visiterId: visiters[Math.floor(Math.random() * visiters.length)].id,
+            visitorId: visiters[Math.floor(Math.random() * visiters.length)].id,
             createdAt: sessions[i][0],
             endAt: sessions[i][1],
           };

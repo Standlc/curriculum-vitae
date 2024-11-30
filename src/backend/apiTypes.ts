@@ -27,7 +27,7 @@ export type AnalyticsOverSomeTime = {
 export type DayAnalytics = {
   date: string;
   visits_count: number;
-  visiters_count: number;
+  visitors_count: number;
 };
 
 export type PeriodAnalytics = {
@@ -52,7 +52,7 @@ export const VisitUpdateSchema = zod.object({
 
 export const VisiterSchema = zod.object({
   id: zod.string(),
-  sessionId: zod.number().or(zod.undefined()),
+  sessionId: zod.number(),
 });
 
 export type VisitCreateType = zod.infer<typeof VisitCreateSchema>;

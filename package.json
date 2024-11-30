@@ -9,6 +9,7 @@
     "lint": "next lint",
     "codegen": "kysely-codegen --out-file ./src/backend/types.ts",
     "migrate": "cd ./src/backend && prisma migrate dev",
+    "create-migration-file": "cd ./src/backend && prisma migrate dev --create-only",
     "generate": "cd ./src/backend && prisma generate",
     "seed": "tsx ./src/backend/seed.ts",
     "seedDevices": "tsx ./src/backend/seedDevices.ts"

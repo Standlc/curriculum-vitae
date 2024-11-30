@@ -55,7 +55,7 @@ const fillMissingGraphDays = (analytics: AnalyticsOverSomeTime) => {
     }
     return {
       date: day,
-      visiters_count: 0,
+      visitors_count: 0,
       visits_count: 0,
     };
   });
@@ -222,7 +222,7 @@ export const VisitsGraph = ({
               <span className="font-normal opacity-text text-xs">
                 Top traffic source{" "}
                 {analyticsQuery.data.top_referrer_count !== null &&
-                  `${Math.floor(
+                  `(${Math.floor(
                     (analyticsQuery.data.top_referrer_count /
                       (analyticsQuery.data.visits_count ?? 1)) *
                       100
@@ -262,8 +262,8 @@ export const VisitsGraph = ({
               borderColor: "rgb(30 100 200)",
             },
             {
-              label: "Visiters",
-              data: graphData.map((d) => d.visiters_count),
+              label: "Visitors",
+              data: graphData.map((d) => d.visitors_count),
               tension: 0.05,
               borderWidth: 0,
               fill: true,
