@@ -20,7 +20,7 @@ export default function Contact() {
 
         <span className="opacity-text font-mono text-center whitespace-pre-line">
           {
-            "Explore my open-source projects on Github, check my LinkedIn profile, or email me."
+            "Explore my open-source projects on GitHub, check my LinkedIn profile, or email me."
           }
         </span>
 

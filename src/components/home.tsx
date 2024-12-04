@@ -13,6 +13,7 @@ const Home = () => {
               <img
                 className="h-full w-full"
                 src={"/profile.jpeg"}
+                alt="Stan de La Comble"
               />
             </div>
 

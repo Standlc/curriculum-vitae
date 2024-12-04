@@ -34,7 +34,7 @@ export default function Contacts() {
         target="_blank"
         className="flex gap-2 items-center hover:underline"
       >
-        <span className="opacity-text font-mono text-sm">Github</span>
+        <span className="opacity-text font-mono text-sm">GitHub</span>
         <GitHub />
       </a>
 

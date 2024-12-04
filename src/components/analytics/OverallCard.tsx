@@ -16,8 +16,8 @@ export const OverallCard = ({ analytics }: { analytics: Analytics }) => {
         </h1>
       </div>
 
-      <div className="overflow-x-scroll">
-        <div className="flex gap-5 justify-evenly items-center pt-5 min-w-[750px]">
+      <div className="overflow-x-scroll -mx-5">
+        <div className="flex gap-5 justify-evenly items-center pt-5 min-w-[750px] mx-5">
           <div className="flex flex-col gap-0 h-full justify-center">
             <span className="text-xl font-semibold">
               {analytics.total_visits_count ?? 0}

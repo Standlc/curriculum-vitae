@@ -28,7 +28,7 @@ const Analytics = () => {
   }
 
   return (
-    <div className="font-mono max-w-[900px] m-auto min-h-screen p-5 flex flex-col gap-5 text-sm animate-fade-in">
+    <div className="font-mono max-w-[900px] m-auto min-h-screen p-5 flex flex-col gap-3 text-sm animate-fade-in">
       <h1 className="font-bold text-2xl">Analytics</h1>
 
       <OverallCard analytics={anaylytics.data} />
@@ -40,7 +40,7 @@ const Analytics = () => {
 
       <VisitsGraph analytics={anaylytics.data.analyticsOverSomeTime} />
 
-      <div className="flex gap-5 flex-wrap">
+      <div className="flex gap-3 flex-wrap">
         <CountriesCard
           countries={anaylytics.data.countries}
           total_visits_count={anaylytics.data.total_visits_count}

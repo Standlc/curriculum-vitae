@@ -8,6 +8,7 @@ const PROJECTS: {
   links: {
     url: string;
     icon: any;
+    label: string;
   }[];
 }[] = [
   {
@@ -19,6 +20,7 @@ const PROJECTS: {
       {
         url: "https://cyberjobs.fr",
         icon: <Language />,
+        label: "Cyberjobs website",
       },
     ],
   },
@@ -30,10 +32,12 @@ const PROJECTS: {
       {
         url: "https://github.com/Standlc/Notion-clone",
         icon: <GitHub />,
+        label: "GitHub",
       },
       {
         url: "https://notion-clone-standlc.vercel.app/",
         icon: <Language />,
+        label: "GitHub",
       },
     ],
   },
@@ -45,6 +49,7 @@ const PROJECTS: {
       {
         url: "https://github.com/Standlc/Minishell",
         icon: <GitHub />,
+        label: "GitHub",
       },
     ],
   },
@@ -56,6 +61,7 @@ const PROJECTS: {
       {
         url: "https://github.com/Standlc/miniRT",
         icon: <GitHub />,
+        label: "GitHub",
       },
     ],
   },
@@ -68,6 +74,7 @@ const PROJECTS: {
       {
         url: "https://github.com/Standlc/Webserv",
         icon: <GitHub />,
+        label: "GitHub",
       },
     ],
   },
@@ -80,6 +87,20 @@ const PROJECTS: {
       {
         url: "https://github.com/Standlc/View-social",
         icon: <GitHub />,
+        label: "GitHub",
+      },
+    ],
+  },
+  {
+    title: "Shakespeare GPT",
+    description:
+      "GPT model made with PyTorch, with 24 million parameters and a custom tokenizer, trained on some works of Shakespeare.",
+    skills: "Python, PyTorch",
+    links: [
+      {
+        url: "https://github.com/Standlc/Shakespeare",
+        icon: <GitHub />,
+        label: "GitHub",
       },
     ],
   },
@@ -92,6 +113,7 @@ const PROJECTS: {
       {
         url: "https://github.com/Standlc/transcendence",
         icon: <GitHub />,
+        label: "GitHub",
       },
     ],
   },
@@ -140,7 +162,7 @@ const Project = ({
       <div className="flex flex-col gap-2">
         <h1 className="font-mono font-semibold">
           {title}
-          <span className="font-normal text"> ({skills})</span>
+          <span className="font-normal text-base"> ({skills})</span>
         </h1>
         <span className="font-mono opacity-text text-base">{description}</span>
       </div>
@@ -151,6 +173,7 @@ const Project = ({
             key={i}
             href={link.url}
             target="_blank"
+            aria-label={link.label}
             className="flex gap-2 items-center hover:underline opacity-text hover:opacity-100 transition-opacity"
           >
             {link.icon}

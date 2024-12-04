@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { Playfair_Display, Inter } from "next/font/google";
+import Head from "next/head";
 import { ReactElement, ReactNode } from "react";
 
 const Playfair = Playfair_Display({
@@ -38,6 +39,18 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+        <title>Stan de La Comble</title>
+        <meta
+          name="description"
+          content="Software developer passionate about innovation and design."
+        />
+        <meta
+          name="keywords"
+          content="Stan de La Comble, Stanislas, de La Comble"
+        />
+      </Head>
       {getLayout(
         <main className={`${Playfair.variable} ${inter.variable} font-serif`}>
           <Component {...pageProps} />

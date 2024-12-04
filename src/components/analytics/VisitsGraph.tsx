@@ -30,26 +30,34 @@ const MONTHS = [
 
 const formatDate = (str: string, dataLen: number) => {
   const date = new Date(str);
-  return `${MONTHS[date.getMonth()]} ${date.getDate()} ${
-    dataLen >= 365 ? date.getFullYear() : ""
-  }`;
+  if (dataLen >= 365) {
+    return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+  }
+  return `${MONTHS[date.getMonth()]} ${date.getDate()}`;
 };
 
-const fillMissingGraphDays = (analytics: AnalyticsOverSomeTime) => {
+const fillMissingGraphDays = (
+  analytics: AnalyticsOverSomeTime
+): AnalyticsOverSomeTime => {
   const timePeriod = analytics.timePeriod;
 
   const lastNDays = Array(timePeriod)
     .fill(0)
     .map((_, i) => {
-      const now = new Date();
-      now.setDate(now.getDate() - (timePeriod - 1 - i));
-      return `${now.getUTCFullYear()}-${
-        now.getUTCMonth() + 1
-      }-${now.getUTCDate()}`;
+      const date = new Date();
+      date.setDate(date.getDate() - (timePeriod - 1 - i));
+      return date.toDateString();
     });
 
+  analytics.visits_per_day = analytics.visits_per_day.map((v) => {
+    return {
+      ...v,
+      date: new Date(v.date)?.toDateString(),
+    };
+  });
+
   analytics.visits_per_day = lastNDays.map((day) => {
-    const visitsThatDay = analytics.visits_per_day.find((v) => v.date === day);
+    const visitsThatDay = analytics.visits_per_day.find((v) => day === v.date);
     if (visitsThatDay) {
       return visitsThatDay;
     }
@@ -78,7 +86,6 @@ export const VisitsGraph = ({
   const analyticsQuery = useQuery<AnalyticsOverSomeTime, AxiosError>({
     queryKey: ["analytics-time-option", timeOption],
     queryFn: async () => {
-      // console.log("fetching", timeOption, "days");
       const res = await axios.get<AnalyticsOverSomeTime>(
         `/api/analytics?time=${timeOption}`
       );
@@ -102,7 +109,7 @@ export const VisitsGraph = ({
     if (analyticsQuery.error?.status === 401) {
       router.push("/login");
     }
-  }, [analyticsQuery.error]);
+  }, [analyticsQuery.error, router]);
 
   const graphData = analyticsQuery.data?.visits_per_day;
 
@@ -152,18 +159,13 @@ export const VisitsGraph = ({
           </div>
         </div>
 
-        <div className="border-t border-white border-opacity-10 pt-3 overflow-x-scroll">
-          <div className="flex gap-4 items-center justify-evenly min-w-[600px]">
+        <div className="border-t border-white border-opacity-10 pt-3 overflow-x-scroll -mx-5">
+          <div className="flex gap-4 items-center justify-between min-w-[600px] mx-5">
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold leading-tight">
                 +{analyticsQuery.data.visits_count ?? 0}
               </h1>
-              <span className="font-normal opacity-text text-xs">
-                Visits{" "}
-                {/* <span className="text-sm opacity-text font-normal">
-                ({analyticsQuery.data.visitors_count} unique)
-              </span> */}
-              </span>
+              <span className="font-normal opacity-text text-xs">Visits</span>
             </div>
 
             <div className="w-[1px] h-[20px] bg-white bg-opacity-10"></div>
@@ -220,7 +222,7 @@ export const VisitsGraph = ({
                   : "No data"}
               </h1>
               <span className="font-normal opacity-text text-xs">
-                Top traffic source{" "}
+                Top traffic src.{" "}
                 {analyticsQuery.data.top_referrer_count !== null &&
                   `(${Math.floor(
                     (analyticsQuery.data.top_referrer_count /
@@ -290,6 +292,9 @@ export const VisitsGraph = ({
                   return date.toDateString();
                 },
               },
+              cornerRadius: 10,
+              bodySpacing: 10,
+              usePointStyle: true,
               titleColor: "rgba(255,255,255,0.5)",
               titleFont: {
                 size: 12,
@@ -318,9 +323,10 @@ export const VisitsGraph = ({
                 maxRotation: 0,
                 callback: function (_, i) {
                   const n = Math.ceil(graphData.length / 5);
-                  return (i + 3) % n === 0
-                    ? formatDate(graphData[i].date, graphData.length)
-                    : "";
+                  if ((i + 3) % n === 0) {
+                    return formatDate(graphData[i].date, graphData.length);
+                  }
+                  return null;
                 },
                 autoSkip: false,
               },
