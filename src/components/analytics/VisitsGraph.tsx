@@ -160,7 +160,7 @@ export const VisitsGraph = ({
         </div>
 
         <div className="border-t border-white border-opacity-10 pt-3 overflow-x-scroll -mx-5">
-          <div className="flex gap-4 items-center justify-between min-w-[600px] mx-5">
+          <div className="flex gap-4 items-center justify-evenly min-w-[550px] mx-5">
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold leading-tight">
                 +{analyticsQuery.data.visits_count ?? 0}
@@ -320,15 +320,17 @@ export const VisitsGraph = ({
             },
             x: {
               ticks: {
+                padding: 0,
                 maxRotation: 0,
                 callback: function (_, i) {
-                  const n = Math.ceil(graphData.length / 5);
-                  if ((i + 3) % n === 0) {
+                  const n_labels = window.innerWidth < 600 ? 4 : 5;
+                  const modulo = Math.ceil(graphData.length / n_labels);
+                  const offset = Math.round(graphData.length * 0.1);
+                  if ((i + offset) % modulo === 0) {
                     return formatDate(graphData[i].date, graphData.length);
                   }
                   return null;
                 },
-                autoSkip: false,
               },
               grid: {
                 display: false,
