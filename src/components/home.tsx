@@ -4,6 +4,18 @@ import Contacts from "./Contacts";
 const Home = () => {
   return (
     <div className="h-screen w-full" id="home">
+      <div className="absolute top-0 left-0 w-full h-full">
+        <div className="h-full w-full [background:repeating-linear-gradient(140deg_in_oklab,black,red_200px)] blur-xl"></div>
+        {/* <img
+          src="/bg-compress.avif"
+          alt=""
+          className="h-full w-full object-cover"
+        /> */}
+        <div
+          className="bg-[url('/noise.webp')] h-full w-full absolute top-0 left-0 mix-blend-overlay"
+          style={{ backgroundSize: "125px 125px" }}
+        ></div>
+      </div>
       <div className="h-full flex items-center top-0 left-0 w-full">
         <div
           className={`w-full flex flex-col gap-7 animate-fade-in [animation-delay:0.6s]`}
