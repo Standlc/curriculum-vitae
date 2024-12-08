@@ -63,9 +63,12 @@ const setVisiterToken = async (res: NextApiResponse, visitor: VisiterType) => {
     .setProtectedHeader({ alg: "HS256" })
     .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() + 1000); // make the cookie last forever
+
   res.setHeader(
     "Set-Cookie",
-    `visiterToken=${visiterToken}; HttpOnly; SameSite=Strict; Path=/`
+    `visiterToken=${visiterToken}; HttpOnly; SameSite=Strict; Path=/; Expires=${expirationDate.toUTCString()}`
   );
 };
 

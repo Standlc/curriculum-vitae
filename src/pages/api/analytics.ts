@@ -11,28 +11,26 @@ import {
 
 const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
   const analytics = await db
-    .with("total_visits", (db) =>
+
+    .with("NotBlackListedVisit", (db) =>
       db
         .selectFrom("Visit")
         .where(
-          "createdAt",
-          ">=",
-          sql<Date>`NOW() - MAKE_INTERVAL(days => ${time})`
+          sql<boolean>`"createdAt" >= NOW() - MAKE_INTERVAL(days => ${time})`
         )
-        .select((eb) => [
-          eb.fn.count<number>("Visit.id").as("visits_count"),
-          eb.fn.count<number>("visitorId").distinct().as("visitors_count"),
-        ])
+        // remove blacklisted visits
+        .leftJoin(
+          "BlackListedVisitor",
+          "BlackListedVisitor.visitorId",
+          "Visit.visitorId"
+        )
+        .where("BlackListedVisitor.visitorId", "is", null)
+        .selectAll("Visit")
     )
 
     .with("top_referrer", (db) =>
       db
-        .selectFrom("Visit")
-        .where(
-          "createdAt",
-          ">=",
-          sql<Date>`NOW() - MAKE_INTERVAL(days => ${time})`
-        )
+        .selectFrom("NotBlackListedVisit as Visit")
         .where("referrer", "!=", "")
         .where("referrer", "is not", null)
         .select((eb) => [
@@ -46,12 +44,7 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
 
     .with("top_device", (db) =>
       db
-        .selectFrom("Visit")
-        .where(
-          "createdAt",
-          ">=",
-          sql<Date>`NOW() - MAKE_INTERVAL(days => ${time})`
-        )
+        .selectFrom("NotBlackListedVisit as Visit")
         .innerJoin("Device", "Device.id", "Visit.deviceId")
         .select((eb) => [
           eb.fn.count<number>("Visit.deviceId").as("count"),
@@ -62,8 +55,7 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
         .limit(1)
     )
 
-    .selectFrom("Visit")
-    .where(sql<boolean>`"createdAt" >= NOW() - MAKE_INTERVAL(days => ${time})`)
+    .selectFrom("NotBlackListedVisit as Visit")
     .select((eb) => [
       jsonArrayFrom(
         eb
@@ -88,15 +80,9 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
         .select(["top_device.count"])
         .as("top_device_count"),
 
-      eb
-        .selectFrom("total_visits")
-        .select(["total_visits.visitors_count"])
-        .as("visitors_count"),
+      eb.fn.count<number>("Visit.id").as("visits_count"),
 
-      eb
-        .selectFrom("total_visits")
-        .select(["total_visits.visits_count"])
-        .as("visits_count"),
+      eb.fn.count<number>("Visit.visitorId").distinct().as("visitors_count"),
 
       eb
         .selectFrom("Visitor")
@@ -105,6 +91,13 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
           ">=",
           sql<Date>`NOW() - MAKE_INTERVAL(days => ${time})`
         )
+        // remove blacklisted visitors
+        .leftJoin(
+          "BlackListedVisitor",
+          "BlackListedVisitor.visitorId",
+          "Visitor.id"
+        )
+        .where("BlackListedVisitor.visitorId", "is", null)
         .select((eb) => [
           eb.fn.count<number>("Visitor.id").distinct().as("count"),
         ])
@@ -130,26 +123,35 @@ const getAnalyticsOverSomeTime = async (time: AnalyticsTimeOptionsType) => {
 
 const handleGet = async (res: NextApiResponse) => {
   const query = db
-    .with("visits_count", (db) =>
+
+    .with("NotBlackListedVisit", (db) =>
       db
         .selectFrom("Visit")
-        .select((eb) => eb.fn.countAll<number>().as("count"))
+        // remove blacklisted visits
+        .leftJoin(
+          "BlackListedVisitor",
+          "BlackListedVisitor.visitorId",
+          "Visit.visitorId"
+        )
+        .where("BlackListedVisitor.visitorId", "is", null)
+        .selectAll("Visit")
     )
 
     .with(
       "times",
       (db) =>
         db
-          .selectFrom("Visit")
+          .selectFrom("NotBlackListedVisit")
           .select([sql<number>`"endAt" - "createdAt"`.as("time"), "createdAt"])
           .orderBy("time", "asc")
       // .offset(sql`ROUND((select "count" from "visits_count") * 0.05)`)
       // .limit(sql`ROUND((select "count" from "visits_count")  * 0.9)`)
     )
 
-    .selectFrom("Visit")
+    .selectFrom("NotBlackListedVisit")
     .select((eb) => [
-      eb.selectFrom("visits_count").select("count").as("total_visits_count"),
+      eb.fn.count<number>("NotBlackListedVisit.id").as("total_visits_count"),
+
       eb
         .selectFrom("times")
         .select([
@@ -158,13 +160,13 @@ const handleGet = async (res: NextApiResponse) => {
         .as("avg_visit_time"),
 
       eb.fn
-        .count<number>("Visit.visitorId")
+        .count<number>("NotBlackListedVisit.visitorId")
         .distinct()
         .as("unique_visits_count"),
 
       jsonArrayFrom(
         eb
-          .selectFrom("Visit as v")
+          .selectFrom("NotBlackListedVisit as v")
           .where("v.country", "is not", null)
           .select([
             "v.country",
@@ -178,7 +180,7 @@ const handleGet = async (res: NextApiResponse) => {
 
       jsonArrayFrom(
         eb
-          .selectFrom("Visit")
+          .selectFrom("NotBlackListedVisit as Visit")
           .where("referrer", "!=", "")
           .where("referrer", "is not", null)
           .select([
@@ -192,7 +194,7 @@ const handleGet = async (res: NextApiResponse) => {
 
       jsonArrayFrom(
         eb
-          .selectFrom("Visit")
+          .selectFrom("NotBlackListedVisit as Visit")
           .innerJoin("Device", "Device.id", "Visit.deviceId")
           .select([
             (eb) => eb.fn.count<number>("deviceId").as("count"),
