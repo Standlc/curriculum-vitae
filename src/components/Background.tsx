@@ -1,4 +1,5 @@
 import { useAnimateOnScreen } from "@/hooks/useAnimateOnScreen";
+import { useEffect } from "react";
 
 export default function Background() {
   const { element } = useAnimateOnScreen({ entranceRatio: 0.8, unique: true });
@@ -13,10 +14,7 @@ export default function Background() {
       </h1>
       <div className="font-mono opacity-text flex flex-col gap-5 text-base">
         {[
-          "I was born in Paris in 2001 and currently reside in Chambéry, France, while studying computer science at School 42 in Paris.",
-          "After high school, I initially studied design in Lyon in 2020 but dropped out in the first year to pursue coding. The following year, I landed a job as a front-end developer at a major French company in the cybersecurity recruitment sector where I worked for half a year, discovering how real-world projects function.",
-          "After successfully passing the 'Piscine' entrance exam (a one-month competition in C) in Paris, I entered École 42 Paris in November 2022 to deepen my knowledge about software engineering and meet more people who share my passion.",
-          "I now aspire to leave my mark on the world by building useful and beautiful software for people.",
+          "I currently live in Paris, where I study computer science at School 42 and work as a software engineer at <https://getnao.io|nao labs>, building a code editor for data work.",
         ].map((text, i) => (
           <Paragraph key={i} text={text} />
         ))}
@@ -30,6 +28,29 @@ const Paragraph = ({ text }: { text: string }) => {
     entranceRatio: 0.8,
     unique: true,
   });
+  const hasLink = text.includes("<https://");
 
-  return <p ref={element as unknown as undefined}>{text}</p>;
+  if (!hasLink) {
+    return <p ref={element as unknown as undefined}>{text}</p>;
+  }
+
+  const linkStart = text.indexOf("<https://");
+  const linkEnd = text.indexOf("|", linkStart);
+  const link = text.substring(linkStart + 1, linkEnd);
+  const linkLabel = text.substring(linkEnd + 1, text.indexOf(">", linkEnd));
+
+  return (
+    <p ref={element as unknown as undefined}>
+      <span>{text.slice(0, linkStart)}</span>
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:underline"
+      >
+        {linkLabel}
+      </a>
+      <span>{text.slice(text.indexOf(">", linkEnd) + 1)}</span>
+    </p>
+  );
 };
