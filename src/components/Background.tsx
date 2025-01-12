@@ -1,5 +1,4 @@
 import { useAnimateOnScreen } from "@/hooks/useAnimateOnScreen";
-import { useEffect } from "react";
 
 export default function Background() {
   const { element } = useAnimateOnScreen({ entranceRatio: 0.8, unique: true });
