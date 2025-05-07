@@ -39,7 +39,7 @@ export default function Contacts() {
       </a>
 
       <a
-        href="https://linkedin.com/in/stanislas-de-la-comble-514221203"
+        href="https://www.linkedin.com/in/stan-de-la-comble-514221203/"
         target="_blank"
         className="flex gap-2 items-center hover:underline"
       >
