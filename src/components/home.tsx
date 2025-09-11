@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { TypeWriterText } from "./TypeWriterText";
 import Contacts from "./Contacts";
 
@@ -9,11 +10,13 @@ const Home = () => {
           className={`w-full flex flex-col gap-7 animate-fade-in [animation-delay:0.6s]`}
         >
           <div className="flex gap-8 flex-col items-start sm:flex-row sm:items-center">
-            <div className="sm:min-w-[100px] sm:w-[100px] sm:h-[100px] w-[40%] aspect-square rounded-full overflow-hidden">
-              <img
+            <div className="sm:min-w-[100px] sm:w-[100px] sm:h-[100px] w-[40%] aspect-square rounded-full overflow-hidden select-none">
+              <Image
                 className="h-full w-full"
-                src={"/profile.jpeg"}
+                src={"/me-sf.jpeg"}
                 alt="Stan de La Comble"
+                width={200}
+                height={200}
               />
             </div>
 
@@ -22,7 +25,7 @@ const Home = () => {
               <div className="flex items-center opacity-text">
                 <TypeWriterText
                   ogText={
-                    "Software developer passionate about innovation and design."
+                    "Software engineer passionate about creating products that truly help people."
                   }
                 />
               </div>
@@ -30,7 +33,7 @@ const Home = () => {
           </div>
 
           <div className="self-end w-min">
-            <Contacts />
+            <Contacts compact />
           </div>
         </div>
       </div>

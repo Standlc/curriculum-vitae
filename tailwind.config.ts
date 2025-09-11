@@ -27,7 +27,7 @@ export default {
       },
       animation: {
         "clipboard-animation":
-          "clipboard-animation 5s cubic-bezier(0.5,0,0,1) forwards",
+          "clipboard-animation 4s cubic-bezier(0.5,0,0,1) forwards",
         "fade-in": "fade-in 1s cubic-bezier(0.5,0,0,1) both",
         "fade-in-right": "fade-in-right 1s cubic-bezier(0.5,0,0,1) both",
         "menu-fade-in": "menu-fade-in 0.5s cubic-bezier(0.5,0,0,1) both",

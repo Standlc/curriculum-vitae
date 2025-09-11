@@ -13,7 +13,8 @@ export default function Background() {
       </h1>
       <div className="font-mono opacity-text flex flex-col gap-5 text-base">
         {[
-          "I currently live in Paris, where I study computer science at School 42 and work as a software engineer at <https://getnao.io|nao labs>, building a code editor for data work.",
+          "I've studied computer science at Ecole 42 in Paris, where I've learned about low level programming in C and Unix systems.",
+          "Since January 2025, I've been a founding engineer at Y Combinator startup <https://getnao.io|nao Labs>, where we're building an AI code editor for data teams.",
         ].map((text, i) => (
           <Paragraph key={i} text={text} />
         ))}
@@ -45,7 +46,7 @@ const Paragraph = ({ text }: { text: string }) => {
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="hover:underline"
+        className="underline hover:opacity-70 whitespace-nowrap"
       >
         {linkLabel}
       </a>
