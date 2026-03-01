@@ -25,7 +25,7 @@ const Home = () => {
               <div className="flex items-center opacity-text">
                 <TypeWriterText
                   ogText={
-                    "Software engineer passionate about creating products that truly help people."
+                    "Software engineer passionate about beautiful, useful products."
                   }
                 />
               </div>

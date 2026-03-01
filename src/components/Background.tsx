@@ -13,8 +13,9 @@ export default function Background() {
       </h1>
       <div className="font-mono opacity-text flex flex-col gap-5 text-base">
         {[
-          "I've studied computer science at Ecole 42 in Paris, where I've learned about low level programming in C and Unix systems.",
-          "Since January 2025, I've been a founding engineer at Y Combinator startup <https://getnao.io|nao Labs>, building an AI code editor for data teams.",
+          "I studied computer science at Ecole 42 in Paris, where I learned about low level programming in C and Unix systems.",
+          "In 2025, I was a founding engineer at Y Combinator startup <https://getnao.io|nao Labs>, building an AI code editor for data engineering teams.",
+          "I'm now experimenting with building novel AI solutions that truly help people.",
         ].map((text, i) => (
           <Paragraph key={i} text={text} />
         ))}
